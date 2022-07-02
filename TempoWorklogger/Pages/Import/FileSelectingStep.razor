@@ -1,0 +1,46 @@
+﻿@page "/import/select-file"
+
+<StepFlows ActualStep="Model.ImportSteps.File" />
+
+<div class="row">
+    <div class="col">
+        <h3 class="">Select import file</h3>
+    </div>
+    <div class="col-auto">
+        <CancalWizard />
+    </div>
+    <div class="col-auto">
+        <GoBack />
+    </div>
+</div>
+
+<div class="row mb-2 mt-2">
+    <div class="col-12">
+        <InputFile class="form-control form-control-lg" id="importFile" OnChange="HandleFileSelected" />
+    </div>
+</div>
+
+@if (selectedFile != null)
+{
+    <div class="row mb-2">
+        <div class="col-12">
+            <h4>Selected file</h4>
+            <ul>
+                <li>
+                    <ul>
+                        <li>Name: @selectedFile.Name</li>
+                        <li>Last modified: @selectedFile.LastModified.ToString()</li>
+                        <li>Size (bytes): @selectedFile.Size</li>
+                        <li>Content type: @selectedFile.ContentType</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-12">
+            <button class="btn btn-primary" @onclick="OnNextClicked">Continue to selecting map template</button>
+        </div>
+    </div>
+}

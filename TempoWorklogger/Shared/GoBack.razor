@@ -1,0 +1,21 @@
+﻿<button class="btn btn-outline-secondary" @onclick="OnGoBackClicked"><i class="fa-solid fa-angles-left"></i> Back</button>
+
+@code {
+    [Parameter]
+    public string PrevPage { get; set; } = string.Empty;
+
+    // TODO cascading parameter
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private void OnGoBackClicked()
+    {
+        if (string.IsNullOrWhiteSpace(PrevPage))
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        NavigationManager.NavigateTo(PrevPage);
+    }
+}

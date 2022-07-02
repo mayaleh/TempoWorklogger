@@ -1,0 +1,128 @@
+﻿@page "/import/confirm-preview"
+@using TempoWorklogger.Library.Model.Tempo
+
+@*TODO wizard header to component and parametrize it!*@
+<StepFlows ActualStep="Model.ImportSteps.Preview" />
+
+<div class="row mb-2">
+    <div class="col">
+        <h3 class="">Preview and confirm</h3>
+    </div>
+    <div class="col-auto">
+        <CancalWizard />
+    </div>
+    <div class="col-auto">
+        <GoBack PrevPage="/import/select-map" />
+    </div>
+</div>
+@*End header*@
+
+@if (isReady)
+{
+
+    @if (string.IsNullOrWhiteSpace(errorMessage) == false)
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+
+        return;
+    }
+
+    <div class="row mb-2">
+        <div class="col-12">
+            <button class="btn btn-primary" @onclick="OnConfirmClicked">Execute the import</button>
+        </div>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tableview-tab" data-bs-toggle="tab" data-bs-target="#tableview" type="button" role="tab" aria-controls="tableview" aria-selected="true">Table view</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="jsonview-tab" data-bs-toggle="tab" data-bs-target="#jsonview" type="button" role="tab" aria-controls="jsonview" aria-selected="false">JSON view</button>
+        </li>
+    </ul>
+
+    <div class="tab-content overflow-auto" style="max-width: 100%" id="myTabContent">
+        <div class="tab-pane fade show active" id="tableview" role="tabpanel" aria-labelledby="tableview-tab">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr class="cells-positions">
+                                <td scope="col">@(nameof(Worklog.IssueKey))</td>
+                                <td scope="col">@(nameof(Worklog.Description))</td>
+                                <td scope="col">@(nameof(Worklog.StartTime))</td>
+                                <td scope="col">@(nameof(Worklog.TimeSpentSeconds))</td>
+                                <td scope="col">@(nameof(Worklog.StartDate))</td>
+                                <td scope="col">@(nameof(Worklog.AuthorAccountId))</td>
+                                <td scope="col">@(nameof(Worklog.Attributes))</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var worklogResult in ImportState.WorklogsResults)
+                            {
+
+                                @if (worklogResult.IsFailure)
+                                {
+                                    <tr class="bg-danger">
+                                        <td colspan="8">On row:@(worklogResult.Failure.RowNr) Error: @(worklogResult.Failure.Exception.Message)</td>
+                                    </tr>
+                                    continue;
+                                }
+                                <tr>
+                                    <td>@(worklogResult.Success.IssueKey)</td>
+                                    <td>@(worklogResult.Success.Description)</td>
+                                    <td>@(worklogResult.Success.StartTime)</td>
+                                    <td>@(worklogResult.Success.TimeSpentSeconds)</td>
+                                    <td>@(worklogResult.Success.StartDate)</td>
+                                    <td>@(worklogResult.Success.AuthorAccountId)</td>
+
+                                    <td>
+                                        @if (worklogResult.Success.Attributes != null && worklogResult.Success.Attributes.Any())
+                                        {
+                                            foreach (var attr in worklogResult.Success.Attributes)
+                                            {
+                                                <span class="px-1">@attr.Key: @attr.Value</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="jsonview" role="tabpanel" aria-labelledby="jsonview-tab">
+            @foreach (var worklogResult in ImportState.WorklogsResults)
+            {
+                if (worklogResult.IsFailure)
+                {
+                    <p class="bg-danger p-1">On row:@(worklogResult.Failure.RowNr) Error: @(worklogResult.Failure.Exception.Message)</p>
+                    continue;
+                }
+
+                <pre><code>@System.Text.Json.JsonSerializer.Serialize(worklogResult.Success)</code></pre>
+            }
+        </div>
+    </div>
+
+
+    @*End of the execution*@
+    return;
+}
+
+
+@*is not ready*@
+
+<div>
+    <div class="col-12 mb-2">
+        <h4>Reading the file... @this.readProgress / 100%</h4>
+    </div>
+    <div class="col-12">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.readProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.readProgress)%"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿@page "/import/processing"
+
+<StepFlows ActualStep="Model.ImportSteps.Process" />
+
+<div class="row mb-2">
+    <div class="col">
+        <h3 class="">Processing</h3>
+    </div>
+    @*<div class="col-auto">
+        <CancalWizard />
+    </div>
+    <div class="col-auto">
+        <GoBack PrevPage="/import/confirm-preview" />
+    </div>*@
+</div>
+
+<div>
+    <div class="col-12 mb-2">
+        <h4>Importing to Tempo... @this.readProgress / 100%</h4>
+    </div>
+    <div class="col-12">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.readProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.readProgress)%"></div>
+        </div>
+    </div>
+</div>

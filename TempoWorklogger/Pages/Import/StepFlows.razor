@@ -1,0 +1,16 @@
+﻿@using TempoWorklogger.Model
+<header class="col-md-auto col-12 process-bar" style="max-width: 100%">
+    <ul id="progressbar" class="text-cetner">
+        <li class="@(current >= (int)ImportSteps.File ? "active" : "")" id="file"><strong>File</strong></li>
+        <li class="@(current >= (int)ImportSteps.Template ? "active" : "")" id="template"><strong>Template</strong></li>
+        <li class="@(current >= (int)ImportSteps.Preview ? "active" : "")" id="preview"><strong>Preview</strong></li>
+        <li class="@(current >= (int)ImportSteps.Process ? "active" : "")" id="process"><strong>Process</strong></li>
+    </ul>
+</header>
+
+@code {
+    private int current = 0;
+
+    [Parameter]
+    public ImportSteps ActualStep { get => (ImportSteps)current; set => current = (int)value; }
+}

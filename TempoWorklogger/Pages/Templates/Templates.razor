@@ -1,0 +1,93 @@
+﻿@page "/templates"
+
+<div class="row">
+    <div class="col">
+        <h3 class="mb-2">Mapping Templates</h3>
+    </div>
+    <div class="col-auto">
+        <GoBack />
+    </div>
+</div>
+
+@if (this.isReady == false)
+{
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    return;
+}
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteStorageModal" tabindex="-1" aria-labelledby="deleteStorageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteStorageModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you realy want to delete all templates map? The operation is permanent...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" data-bs-dismiss="modal" @onclick="OnDeleteStorageClicked" class="btn btn-primary">Yes, I know what i am doing!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        @if (string.IsNullOrWhiteSpace(this.errorMessage))
+        {
+            <button class="btn btn-primary" @onclick="OnCreateClicked">Create</button>
+        }
+    </div>
+    <div class="col-auto">
+        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#deleteStorageModal">
+            Delete templates storage
+        </button>
+    </div>
+</div>
+
+@if (string.IsNullOrWhiteSpace(this.errorMessage) == false)
+{
+    <div class="alert alert-danger" role="alert">
+        @this.errorMessage
+    </div>
+    return;
+}
+
+<div class="row mb-2">
+    <div class="col-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Start from row</th>
+                    <th scope="col">Access token</th>
+                    <th scope="col">Column Definitions</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in this.importMaps)
+                {
+                    <tr>
+                        <th scope="row">@item.Name</th>
+                        <td>@item.StartFromRow</td>
+                        <td>@(string.IsNullOrWhiteSpace(item.AccessToken) ? item.AccessToken.First() + "******" + item.AccessToken.Last() : "empty")</td>
+                        <td>@item.ColumnDefinitions.Count() x cols</td>
+                        <td>
+                            <button>Edit</button>
+                            <button>Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
