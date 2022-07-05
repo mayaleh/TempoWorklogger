@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Maya.Ext.Rop;
+using Microsoft.AspNetCore.Components;
 using TempoWorklogger.Library.Model;
 using TempoWorklogger.Library.Model.Tempo;
+using TempoWorklogger.Library.Service;
 using TempoWorklogger.States;
 
 namespace TempoWorklogger.Pages.Import
@@ -12,6 +14,9 @@ namespace TempoWorklogger.Pages.Import
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IStorageService StorageService { get; set; }
 
         private string selectedMap
         {
@@ -30,64 +35,33 @@ namespace TempoWorklogger.Pages.Import
             get => ImportState.ImportMap.ColumnDefinitions.Where(x => x.IsStatic);
         }
 
-        private List<ImportMap> importMaps = new List<ImportMap>(); // TODO load and if is single item, preselect.
+        private List<ImportMap> importMaps = new List<ImportMap>();
 
-        public ImportMapSelectingStep()
+        private string errorMessage = string.Empty;
+        private bool isReady = false;
+        
+
+        protected override void OnInitialized()
         {
-            this.importMaps = new List<ImportMap>
-            {
-                new ImportMap
-                {
-                    Name = "Mock template",
-                    StartFromRow = 2,
-                    AccessToken = "",
-                    ColumnDefinitions = new Library.Model.ColumnDefinition[]
+            StorageService.ImportMapTemplate.Read()
+                .Handle(
+                    success =>
                     {
-                        new Library.Model.ColumnDefinition()
+                        this.importMaps = success;
+                        if (this.importMaps.Count == 1)
                         {
-                            IsStatic = false,
-                            Position = "A",
-                            Name = nameof(Worklog.IssueKey),
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = false,
-                            Position = "B",
-                            Name = nameof(Worklog.Description),
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = true,
-                            Name = nameof(Worklog.AuthorAccountId),
-                            Value = "XXIIIAAA"
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = true,
-                            Name = nameof(AttributeKeyVal) + "_DODO_",
-                            Value = "AtrrValue"
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = false,
-                            Position = "C",
-                            Name = nameof(Worklog.StartDate)
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = false,
-                            Position = "D",
-                            Name = nameof(Worklog.StartTime)
-                        },
-                        new Library.Model.ColumnDefinition()
-                        {
-                            IsStatic = false,
-                            Position = "E",
-                            Name = nameof(Worklog.EndTime)
-                        },
+                            selectedMap = this.importMaps.First().Name;
+                        }
+                        isReady = true;
+                    },
+                    fail =>
+                    {
+                        errorMessage = fail.Message;
+                        isReady = true;
                     }
-                }
-            };
+                );
+
+            base.OnInitialized();
         }
 
         private void OnNextClicked()

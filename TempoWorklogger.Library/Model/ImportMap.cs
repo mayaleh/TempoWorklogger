@@ -14,6 +14,6 @@
 
         public string AccessToken { get; set; }
 
-        public ICollection<ColumnDefinition> ColumnDefinitions { get; set; }
+        public ICollection<ColumnDefinition> ColumnDefinitions { get; set; } = new List<ColumnDefinition>();
     }
 }
