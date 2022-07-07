@@ -9,6 +9,19 @@ namespace TempoWorklogger.Library.Service.Storage
     {
         const string fileStorage = "templateMappingStorage.json";
 
+        public Result<string, Exception> StorageSource()
+        {
+            try
+            {
+                var source = EnsureFileExist(fileStorage);
+                return Result<string, Exception>.Succeeded(source);
+            }
+            catch (Exception e)
+            {
+                return Result<string, Exception>.Failed(e);
+            }
+        }
+
         public Result<List<ImportMap>, Exception> Read()
         {
             try

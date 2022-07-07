@@ -8,6 +8,8 @@ namespace TempoWorklogger.Library
         public static IServiceCollection AddTempoWorkloggerLibrary(this IServiceCollection services)
         {
             services.AddScoped<IFileReaderService, ExcelReaderService>();
+            services.AddScoped<ITempoService, TempoService>();
+
             services.AddSingleton<IStorageService, StorageService>();
             return services;
         }

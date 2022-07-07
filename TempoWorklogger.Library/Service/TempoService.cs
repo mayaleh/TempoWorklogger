@@ -6,12 +6,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace TempoWorklogger.Library.Service
 {
-    interface ITempoService
-    {
-        Task<Result<WorklogResponse, Exception>> CreateWorklog(Worklog worklog);
-    }
-
-    internal class TempoService : Maya.AnyHttpClient.ApiService, ITempoService
+    public class TempoService : Maya.AnyHttpClient.ApiService, ITempoService
     {
         const string TempoUri = "https://api.tempo.io/4";
         const int TimeoutRequestSeconds = 30;
@@ -56,13 +51,19 @@ namespace TempoWorklogger.Library.Service
         /// <returns></returns>
         public async Task<Result<WorklogResponse, Exception>> CreateWorklog(Worklog worklog)
         {
-            //todo Date format to YYYY-MM-DD
-            var uriRequest = new Maya.AnyHttpClient.Model.UriRequest(new string[] { "worklogs" });
+            try
+            {
+                var uriRequest = new Maya.AnyHttpClient.Model.UriRequest(new string[] { "worklogs" });
 
-            var result = await this.HttpPost<WorklogResponse>(uriRequest, worklog)
-                .ConfigureAwait(false);
+                var result = await this.HttpPost<WorklogResponse>(uriRequest, worklog)
+                    .ConfigureAwait(false);
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                return Result<WorklogResponse, Exception>.Failed(e);
+            }
         }
     }
 }

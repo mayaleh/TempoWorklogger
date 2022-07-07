@@ -31,10 +31,10 @@ namespace TempoWorklogger.Library.Service
                 }
 
                 var total = sheet.LastRowNum - importMap.StartFromRow;
+                var precentageDone = 0;
                 total = total == 0 ? 1 : total;
                 for (int i = startFrom; i <= sheet.LastRowNum; i++)
                 {
-                    onProgressChanged.Invoke(100 * i / total);
                     var row = sheet.GetRow(i);
 
                     if (row == null) continue; // empty row
@@ -42,6 +42,9 @@ namespace TempoWorklogger.Library.Service
                     if (row.Cells.All(d => d.CellType == CellType.Blank)) continue; // all cells in row are empty
 
                     worklogsResults.Add(row.MapRowByImportToWorklog(importMap));
+
+                    precentageDone = 100 * i / total;
+                    onProgressChanged.Invoke(precentageDone);
                 }
 
                 return Task.FromResult(worklogsResults);

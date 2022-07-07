@@ -13,6 +13,8 @@ namespace TempoWorklogger.Pages.Templates
         [Inject]
         public IStorageService StorageService { get; set; }
 
+        private string importMapsSource = string.Empty;
+
         private List<ImportMap> importMaps { get; set; }
 
         private string errorMessage = string.Empty;
@@ -20,6 +22,11 @@ namespace TempoWorklogger.Pages.Templates
 
         protected override void OnInitialized()
         {
+            StorageService.ImportMapTemplate.StorageSource()
+                .Handle(
+                    success => importMapsSource = success,
+                    fail => importMapsSource = fail.Message
+                );
             this.LoadTempaltes();
             base.OnInitialized();
         }

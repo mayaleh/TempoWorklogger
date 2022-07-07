@@ -57,6 +57,15 @@
             </div>
         </div>
 
+        <div class="row mb-2 mt-1">
+            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                <label for="@nameof(ImportMap.Name)StartFromRow" class="form-label">Read from row</label>
+            </div>
+            <div class="col">
+                <input @bind="Model.StartFromRow" type="number" step="1" class="form-control" id="@nameof(ImportMap.Name)StartFromRow" placeholder="for skipping the header row, enter nr 2">
+            </div>
+        </div>
+
         <div class="row mt-4 mb-2">
             <div class="col">
                 <h5>Properties</h5>

@@ -25,6 +25,11 @@ namespace TempoWorklogger.Library.Mapper.Tempo
                         continue;
                     }
 
+                    if (string.IsNullOrWhiteSpace(item.Position))
+                    {
+                        continue;
+                    }
+
                     var cellIndex = ExcelHelper.GetColumnIndex(item.Position);
                     worklog = worklog.MapColumnDefinitionExcelRowToWorklog(item, row.GetCell(cellIndex));
                 }

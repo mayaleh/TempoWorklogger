@@ -4,23 +4,49 @@
 
 <div class="row mb-2">
     <div class="col">
-        <h3 class="">Processing</h3>
+        @if (this.isExecuting)
+        {
+
+            <h3 class="">Processing</h3>
+        }
+
+        @if (this.isExecuting == false)
+        {
+            <h3 class="">Stopped</h3>
+        }
     </div>
-    @*<div class="col-auto">
-        <CancalWizard />
-    </div>
-    <div class="col-auto">
-        <GoBack PrevPage="/import/confirm-preview" />
-    </div>*@
 </div>
 
 <div>
     <div class="col-12 mb-2">
-        <h4>Importing to Tempo... @this.readProgress / 100%</h4>
+
+        @if (this.isExecuting)
+        {
+            <h4>Importing to Tempo... @this.processedProgress / 100%</h4>
+        }
+
+        @if (this.isExecuting == false)
+        {
+            <h4>Imported to Tempo... @this.processedProgress / 100% and stopped.</h4>
+        }
     </div>
     <div class="col-12">
         <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.readProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.readProgress)%"></div>
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.processedProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.processedProgress)%"></div>
         </div>
+    </div>
+</div>
+
+<div class="row mt-2 mb-3 align-items-center justify-content-center">
+    <div class="col-auto">
+        @if (this.isExecuting)
+        {
+            <button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-xmark"></i>Stop importing</button>
+        }
+
+        @if (this.isExecuting == false)
+        {
+            <button class="btn btn-outline-success" @onclick="OnContinueImportClicked"><i class="fa-solid fa-xmark"></i>Continue importing</button>
+        }
     </div>
 </div>
