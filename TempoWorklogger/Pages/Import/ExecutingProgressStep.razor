@@ -1,4 +1,5 @@
 ﻿@page "/import/processing"
+@using TempoWorklogger.Library.Model.Tempo
 
 <StepFlows ActualStep="Model.ImportSteps.Process" />
 
@@ -18,18 +19,20 @@
 </div>
 
 <div>
-    <div class="col-12 mb-2">
+    @if (this.isDone == false)
+    {
+        <div class="col-12 mb-2">
+            @if (this.isExecuting)
+            {
+                <h4>Importing to Tempo... @this.processedProgress / 100%</h4>
+            }
 
-        @if (this.isExecuting)
-        {
-            <h4>Importing to Tempo... @this.processedProgress / 100%</h4>
-        }
-
-        @if (this.isExecuting == false)
-        {
-            <h4>Imported to Tempo... @this.processedProgress / 100% and stopped.</h4>
-        }
-    </div>
+            @if (this.isExecuting == false)
+            {
+                <h4>Imported to Tempo... @this.processedProgress / 100% and stopped.</h4>
+            }
+        </div>
+    }
     <div class="col-12">
         <div class="progress">
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.processedProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.processedProgress)%"></div>
@@ -39,14 +42,69 @@
 
 <div class="row mt-2 mb-3 align-items-center justify-content-center">
     <div class="col-auto">
-        @if (this.isExecuting)
+        @if (this.isDone == false)
         {
-            <button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-xmark"></i>Stop importing</button>
+            @if (this.isExecuting)
+            {
+                <button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-pause"></i> Pause importing</button>
+            }
+
+            @if (this.isExecuting == false)
+            {
+                <button class="btn btn-outline-success" @onclick="OnContinueImportClicked"><i class="fa-solid fa-play"></i> Continue importing</button>
+            }
         }
 
-        @if (this.isExecuting == false)
+        @if (this.isDone)
         {
-            <button class="btn btn-outline-success" @onclick="OnContinueImportClicked"><i class="fa-solid fa-xmark"></i>Continue importing</button>
+            <div class="alert alert-success" role="alert">
+                Import completed!
+            </div>
         }
+    </div>
+</div>
+
+
+<div class="row mt-2 mb-3">
+    <div class="col-12">
+        <table class="table table-bordered table-sm" style="height:500px;overflow-y:scroll">
+            <thead>
+                <tr class="cells-positions">
+                    <td scope="col">@(nameof(WorklogResponse.CreatedAt))</td>
+                    <td scope="col">@(nameof(WorklogResponse.TempoWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.JiraWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.Self))</td>
+                    <td scope="col">@(nameof(WorklogResponse.Issue))</td>
+                </tr>
+            </thead>
+            <tbody>
+                <Virtualize Items="@ImportState.WorklogResponseResults" Context="worklogResponseResult">
+                    @if (worklogResponseResult.IsFailure)
+                    {
+                        <tr class="bg-danger">
+                            @*TODO: which one failled?*@
+                            <td colspan="5">
+                                For worklog:@(worklogResponseResult.Failure.Item1.IssueKey)
+                                @(worklogResponseResult.Failure.Item1.StartDate)
+                                @(worklogResponseResult.Failure.Item1.StartTime)
+                                @(worklogResponseResult.Failure.Item1.Description)
+                                Error: @(worklogResponseResult.Failure.Item2.Message)
+                            </td>
+                        </tr>
+                    }
+
+                    @if (worklogResponseResult.IsSuccess)
+                    {
+                        <tr>
+                            <td>@(worklogResponseResult.Success.Item2.CreatedAt)</td>
+                            <td>@(worklogResponseResult.Success.Item2.TempoWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.JiraWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.Self)</td>
+                            <td>@(worklogResponseResult.Success.Item2.Issue.Self)</td>
+                        </tr>
+                    }
+                </Virtualize>
+            </tbody>
+        </table>
     </div>
 </div>

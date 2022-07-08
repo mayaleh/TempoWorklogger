@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TempoWorklogger.Library.Model.Tempo;
 using TempoWorklogger.Library.Service;
 using TempoWorklogger.States;
 
@@ -15,10 +16,10 @@ namespace TempoWorklogger.Pages.Import
         [Inject]
         public ImportState ImportState { get; set; }
 
-        [Inject]
         public ITempoService TempoService { get; set; }
 
         private bool isExecuting = true;
+        private bool isDone = false;
 
         private string errorMessage = string.Empty;
 
@@ -41,6 +42,12 @@ namespace TempoWorklogger.Pages.Import
         {
             this.processedProgress = percemtageDone;
             StateHasChanged();
+        }
+
+        protected override void OnInitialized()
+        {
+            TempoService = new TempoService(ImportState.ImportMap.AccessToken);
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -67,7 +74,13 @@ namespace TempoWorklogger.Pages.Import
                     itemNr++;
                     continue;
                 }
-                
+
+                if (item.IsFailure)
+                {
+                    itemNr++;
+                    continue;
+                }
+
                 await Task.Delay(6000/4); // only 4 requests per second
 
                 if (this.isExecuting == false)
@@ -75,23 +88,31 @@ namespace TempoWorklogger.Pages.Import
                     break;
                 }
 
-                await TempoService.CreateWorklog(item.Success)
-                    .HandleAsync(
+                var worklogRespnseResult = await TempoService.CreateWorklog(item.Success)
+                    .EitherAsync(
                         success =>
                         {
-                            itemNr++;
-                            this.processedItemsCount = itemNr;
-                            this.processedProgress = 100 * itemNr / ImportState.WorklogsResults.Count;
-                            StateHasChanged();
-                            // Todo sotre success
-                            return Task.CompletedTask;
+                            var successResult = Result<(Worklog, WorklogResponse), (Worklog, Exception)>.Succeeded((item.Success, success));
+                            return Task.FromResult(successResult);
                         },
-                        fail =>
+                        failure =>
                         {
-                            // todo hanblde
+                            var failureResult = Result<(Worklog, WorklogResponse), (Worklog, Exception)>.Failed((item.Success, failure));
+                            return Task.FromResult(failureResult);
                         }
                     );
+                
+                ImportState.WorklogResponseResults.Add(worklogRespnseResult);
+
+                itemNr++;
+                this.processedItemsCount = itemNr;
+                this.processedProgress = 100 * itemNr / ImportState.WorklogsResults.Count;
+                StateHasChanged();
             }
+
+            this.isExecuting = false;
+            this.isDone = true;
+            StateHasChanged();
         }
     }
 }

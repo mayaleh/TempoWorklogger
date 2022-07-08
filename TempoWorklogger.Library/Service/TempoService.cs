@@ -1,4 +1,5 @@
 ﻿using Maya.Ext.Rop;
+using NPOI.SS.Formula.Functions;
 using System.Net;
 using System.Text;
 using TempoWorklogger.Library.Model.Tempo;
@@ -39,7 +40,7 @@ namespace TempoWorklogger.Library.Service
         ///               "value": "DODODEFAUL"
         ///               }
         ///           ],
-        ///           "authorAccountId": "62975e0e658d580068890373",
+        ///           "authorAccountId": "<account id>",
         ///           "description": "implement",
         ///           "issueKey": "IDODOEC-8121",
         ///           "startDate": "2022-08-06",
@@ -55,10 +56,9 @@ namespace TempoWorklogger.Library.Service
             {
                 var uriRequest = new Maya.AnyHttpClient.Model.UriRequest(new string[] { "worklogs" });
 
-                var result = await this.HttpPost<WorklogResponse>(uriRequest, worklog)
+                return await this.HttpPost<Result<WorklogResponse>>(uriRequest, worklog)
+                    .MapAsync(success => Task.FromResult(success.Results.First()))
                     .ConfigureAwait(false);
-
-                return result;
             }
             catch (Exception e)
             {

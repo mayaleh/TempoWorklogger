@@ -13,14 +13,6 @@ namespace TempoWorklogger.States
 
         public List<Result<Worklog, (Exception Exception, int RowNr)>> WorklogsResults { get; set; }
 
-    }
-
-    public class FileInfo
-    {
-        public MemoryStream Content { get; set; } = new MemoryStream();
-        public string ContentType { get; set; }
-        public string Name { get; set; }
-        public long Size { get; set; }
-        public DateTimeOffset LastModified { get; set; }
+        public List<Result<(Worklog, WorklogResponse), (Worklog, Exception)>> WorklogResponseResults { get; set; } = new();
     }
 }
