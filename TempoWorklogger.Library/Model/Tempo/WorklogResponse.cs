@@ -1,55 +1,34 @@
-﻿namespace TempoWorklogger.Library.Model.Tempo
+﻿#nullable enable
+namespace TempoWorklogger.Library.Model.Tempo
 {
-    public class Result<T>
-    {
-        public Metadata Metadata { get; set; }
-        public IEnumerable<T> Results { get; set; }
-        public string Self { get; set; }
-    }
+    public record Result<T>(Metadata metadata, IEnumerable<T> results, string self);
 
-    public class Metadata
-    {
-        public int Count { get; set; }
-        public int Limit { get; set; }
-        public string Next { get; set; }
-        public int Offset { get; set; }
-        public string Previous { get; set; }
-    }
+    public record Metadata(
+        int? Count,
+        int? Limit,
+        string? Next,
+        int? Offset,
+        string? Previous);
 
-    public class WorklogResponse
-    {
-        public Attributes Attributes { get; set; }
-        public Author Author { get; set; }
-        public int BillableSeconds { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string Description { get; set; }
-        public Issue Issue { get; set; }
-        public int JiraWorklogId { get; set; }
-        public string Self { get; set; }
-        public string StartDate { get; set; }
-        public int StartTime { get; set; }
-        public int TempoWorklogId { get; set; }
-        public int TimeSpentSeconds { get; set; }
-        public DateTime UpdatedAt { get; set; }
-    }
+    public record WorklogResponse(
+        Attributes? attributes,
+        Author? author,
+        int? billableSeconds,
+        DateTime? createdAt,
+        string? description,
+        Issue? issue,
+        int? jiraWorklogId,
+        string? self,
+        string? startDate,
+        int? startTime,
+        int? tempoWorklogId,
+        int? timeSpentSeconds,
+        DateTime? updatedAt
+   );
 
-    public class Attributes
-    {
-        public string Self { get; set; }
-        public object[] Values { get; set; }
-    }
+    public record Attributes(string? self, object[]? values);
 
-    public class Author
-    {
-        public string AccountId { get; set; }
-        public string Self { get; set; }
-    }
+    public record Author(string? accountId, string? self);
 
-    public class Issue
-    {
-        public int Id { get; set; }
-        public string Key { get; set; }
-        public string Self { get; set; }
-    }
-
+    public record Issue(int? id, string? key, string? self);
 }

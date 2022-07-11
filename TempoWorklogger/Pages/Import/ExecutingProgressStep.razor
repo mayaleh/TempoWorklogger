@@ -16,6 +16,16 @@
             <h3 class="">Stopped</h3>
         }
     </div>
+
+    <div class="col-auto">
+        <CancalWizard />
+    </div>
+    @if (this.isExecuting == false)
+    {
+        <div class="col-auto">
+            <GoBack PrevPage="/import/confirm-preview" />
+        </div>
+    }
 </div>
 
 <div>
@@ -32,12 +42,16 @@
                 <h4>Imported to Tempo... @this.processedProgress / 100% and stopped.</h4>
             }
         </div>
+        @if (this.isExecuting)
+        {
+            <div class="col-12">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.processedProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.processedProgress)%"></div>
+                </div>
+            </div>
+        }
     }
-    <div class="col-12">
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.processedProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.processedProgress)%"></div>
-        </div>
-    </div>
+
 </div>
 
 <div class="row mt-2 mb-3 align-items-center justify-content-center">
@@ -67,14 +81,14 @@
 
 <div class="row mt-2 mb-3">
     <div class="col-12">
-        <table class="table table-bordered table-sm" style="height:500px;overflow-y:scroll">
+        <table class="table table-bordered table-sm">
             <thead>
                 <tr class="cells-positions">
-                    <td scope="col">@(nameof(WorklogResponse.CreatedAt))</td>
-                    <td scope="col">@(nameof(WorklogResponse.TempoWorklogId))</td>
-                    <td scope="col">@(nameof(WorklogResponse.JiraWorklogId))</td>
-                    <td scope="col">@(nameof(WorklogResponse.Self))</td>
-                    <td scope="col">@(nameof(WorklogResponse.Issue))</td>
+                    <td scope="col">@(nameof(WorklogResponse.createdAt))</td>
+                    <td scope="col">@(nameof(WorklogResponse.tempoWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.jiraWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.self))</td>
+                    <td scope="col">@(nameof(WorklogResponse.issue))</td>
                 </tr>
             </thead>
             <tbody>
@@ -96,11 +110,11 @@
                     @if (worklogResponseResult.IsSuccess)
                     {
                         <tr>
-                            <td>@(worklogResponseResult.Success.Item2.CreatedAt)</td>
-                            <td>@(worklogResponseResult.Success.Item2.TempoWorklogId)</td>
-                            <td>@(worklogResponseResult.Success.Item2.JiraWorklogId)</td>
-                            <td>@(worklogResponseResult.Success.Item2.Self)</td>
-                            <td>@(worklogResponseResult.Success.Item2.Issue.Self)</td>
+                            <td>@(worklogResponseResult.Success.Item2.createdAt)</td>
+                            <td>@(worklogResponseResult.Success.Item2.tempoWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.jiraWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.self)</td>
+                            <td>@(worklogResponseResult.Success.Item2.issue.self)</td>
                         </tr>
                     }
                 </Virtualize>

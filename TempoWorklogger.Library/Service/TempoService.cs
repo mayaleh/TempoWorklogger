@@ -9,9 +9,13 @@ namespace TempoWorklogger.Library.Service
 {
     public class TempoService : Maya.AnyHttpClient.ApiService, ITempoService
     {
+#if DEBUG
+        const string TempoUri = "https://localhost:7201";
+        const int TimeoutRequestSeconds = 600;
+#else
         const string TempoUri = "https://api.tempo.io/4";
         const int TimeoutRequestSeconds = 30;
-
+#endif
         public TempoService(string accessToken) : base(new Maya.AnyHttpClient.Model.HttpClientConnector
         {
             Endpoint = TempoUri,
@@ -56,8 +60,8 @@ namespace TempoWorklogger.Library.Service
             {
                 var uriRequest = new Maya.AnyHttpClient.Model.UriRequest(new string[] { "worklogs" });
 
-                return await this.HttpPost<Result<WorklogResponse>>(uriRequest, worklog)
-                    .MapAsync(success => Task.FromResult(success.Results.First()))
+                return await this.HttpPost<Library.Model.Tempo.Result<WorklogResponse>>(uriRequest, worklog)
+                    .MapAsync(success => Task.FromResult(success.results.First()))
                     .ConfigureAwait(false);
             }
             catch (Exception e)

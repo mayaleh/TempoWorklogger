@@ -69,7 +69,7 @@ namespace TempoWorklogger.Pages.Import
             var itemNr = 0;
             foreach (var item in ImportState.WorklogsResults)
             {
-                if (itemNr <= this.processedItemsCount)
+                if (itemNr < ImportState.WorklogResponseResults.Count)
                 {
                     itemNr++;
                     continue;
@@ -81,7 +81,6 @@ namespace TempoWorklogger.Pages.Import
                     continue;
                 }
 
-                await Task.Delay(6000/4); // only 4 requests per second
 
                 if (this.isExecuting == false)
                 {
@@ -108,6 +107,8 @@ namespace TempoWorklogger.Pages.Import
                 this.processedItemsCount = itemNr;
                 this.processedProgress = 100 * itemNr / ImportState.WorklogsResults.Count;
                 StateHasChanged();
+
+                await Task.Delay(1500);
             }
 
             this.isExecuting = false;
