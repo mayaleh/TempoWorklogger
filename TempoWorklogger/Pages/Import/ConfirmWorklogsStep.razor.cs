@@ -46,6 +46,13 @@ namespace TempoWorklogger.Pages.Import
 
                     await ReadImportFile();
                 }
+                catch(ObjectDisposedException e)
+                {
+                    if (e.Message.Equals("Cannot access a closed Stream.", StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        errorMessage = e.Message;
+                    }
+                }
                 catch (Exception e)
                 {
                     errorMessage = e.Message;

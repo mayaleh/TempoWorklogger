@@ -7,6 +7,12 @@
         <h3 class="">Select import file</h3>
     </div>
     <div class="col-auto">
+        @if (selectedFile != null)
+        {
+            <button class="btn btn-primary" @onclick="OnNextClicked">Continue to selecting map template <i class="fa fa-arrow-right"></i></button>
+        }
+    </div>
+    <div class="col-auto">
         <CancalWizard />
     </div>
     <div class="col-auto">
@@ -35,12 +41,6 @@
                     </ul>
                 </li>
             </ul>
-        </div>
-    </div>
-
-    <div class="row mb-2">
-        <div class="col-12">
-            <button class="btn btn-primary" @onclick="OnNextClicked">Continue to selecting map template</button>
         </div>
     </div>
 }
