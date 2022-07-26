@@ -11,7 +11,8 @@
 
     private void OnCancelImportClicked()
     {
-        ImportState = new ImportState();
+        ImportState.Dispose();
+        StateHasChanged();
         NavigationManager.NavigateTo("/");
         return;
     }

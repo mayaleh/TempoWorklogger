@@ -5,7 +5,7 @@ using TempoWorklogger.Library.Model.Tempo;
 
 namespace TempoWorklogger.States
 {
-    public class ImportState
+    public class ImportState : IDisposable
     {
         public FileInfo File { get; set; }
 
@@ -14,5 +14,13 @@ namespace TempoWorklogger.States
         public List<Result<Worklog, (Exception Exception, int RowNr)>> WorklogsResults { get; set; }
 
         public List<Result<(Worklog, WorklogResponse), (Worklog, Exception)>> WorklogResponseResults { get; set; } = new();
+
+        public void Dispose()
+        {
+            File = new();
+            ImportMap = new();
+            WorklogsResults = new();
+            WorklogResponseResults = new();
+        }
     }
 }

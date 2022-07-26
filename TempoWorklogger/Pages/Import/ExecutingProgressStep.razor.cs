@@ -108,7 +108,7 @@ namespace TempoWorklogger.Pages.Import
                 this.processedProgress = 100 * itemNr / ImportState.WorklogsResults.Count;
                 StateHasChanged();
 
-                await Task.Delay(1500);
+                await Task.Delay(700);
             }
 
             this.isExecuting = false;

@@ -20,7 +20,7 @@ namespace TempoWorklogger.Library.Model.Tempo
         int? jiraWorklogId,
         string? self,
         string? startDate,
-        int? startTime,
+        string? startTime,
         int? tempoWorklogId,
         int? timeSpentSeconds,
         DateTime? updatedAt
