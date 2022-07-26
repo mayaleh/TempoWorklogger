@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TempoWorklogger.Library.Service;
 using TempoWorklogger.States;
@@ -26,6 +27,13 @@ namespace TempoWorklogger.Pages.Import
         private string errorMessage = string.Empty;
 
         private int readProgress = 0;
+
+        private JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
 
         public ConfirmWorklogsStep()
         {

@@ -1,6 +1,7 @@
 ﻿using Maya.Ext.Rop;
 using Microsoft.AspNetCore.Components;
 using System.Collections;
+using System.Web;
 using TempoWorklogger.Library.Model;
 using TempoWorklogger.Library.Model.Tempo;
 using TempoWorklogger.Library.Service;
@@ -28,9 +29,9 @@ namespace TempoWorklogger.Pages.Templates
 
         protected override void OnInitialized()
         {
-
             if (string.IsNullOrWhiteSpace(Name) == false)
             {
+                Name = HttpUtility.UrlDecode(Name);
                 StorageService.ImportMapTemplate.Read()
                     .Handle(
                         success =>

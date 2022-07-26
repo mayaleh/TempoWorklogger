@@ -1,5 +1,6 @@
 ﻿using Maya.Ext.Rop;
 using Microsoft.AspNetCore.Components;
+using System.Web;
 using TempoWorklogger.Library.Model;
 using TempoWorklogger.Library.Service;
 
@@ -19,6 +20,8 @@ namespace TempoWorklogger.Pages.Templates
 
         private string errorMessage = string.Empty;
         private bool isReady = false;
+
+        private ImportMap importMapToDelete = new();
 
         protected override void OnInitialized()
         {
@@ -52,6 +55,29 @@ namespace TempoWorklogger.Pages.Templates
         {
             NavigationManager.NavigateTo("/templates/create");
         }
+        private void OnEditClicked(string name)
+        {
+            var friendlyName = HttpUtility.UrlEncodeUnicode(name);
+            NavigationManager.NavigateTo($"/templates/{friendlyName}/edit");
+        }
+
+        private void OnDeleteItemClicked(ImportMap item)
+        {
+            this.importMapToDelete = item;
+        }
+
+        private void OnDeleteItemConfirmClicked()
+        {
+            // TBD remove this.importMapToDelete from the storage and reset this.importMapToDelete and reload table
+            StateHasChanged();
+        }
+
+        private void OnCancelDeleteItemClicked()
+        {
+            this.importMapToDelete = new();
+            StateHasChanged();
+        }
+        
 
         private void OnDeleteStorageClicked()
         {
