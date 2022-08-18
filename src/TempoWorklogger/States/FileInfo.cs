@@ -1,5 +1,6 @@
 ﻿namespace TempoWorklogger.States
 {
+    [Obsolete]
     public class FileInfo
     {
         public MemoryStream Content { get; set; } = new MemoryStream();

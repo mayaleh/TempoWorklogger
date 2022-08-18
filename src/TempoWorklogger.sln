@@ -10,6 +10,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Library", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Library.Tests", "TempoWorklogger.Library.Tests\TempoWorklogger.Library.Tests.csproj", "{512A4A39-B3F7-4DC9-968B-82CD0D431D86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.CQRS", "TempoWorklogger.CQRS\TempoWorklogger.CQRS.csproj", "{90968A60-DC7F-4469-9A00-174F3FA3D3F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Contract", "TempoWorklogger.Contract\TempoWorklogger.Contract.csproj", "{15558FE4-3D62-43D8-9059-0AD50CCEB412}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.UI", "TempoWorklogger.UI\TempoWorklogger.UI.csproj", "{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Dto", "TempoWorklogger.Dto\TempoWorklogger.Dto.csproj", "{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Service", "TempoWorklogger.Service\TempoWorklogger.Service.csproj", "{F53D382E-BCD6-44B4-914B-407D7965E4CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +40,26 @@ Global
 		{512A4A39-B3F7-4DC9-968B-82CD0D431D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{512A4A39-B3F7-4DC9-968B-82CD0D431D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{512A4A39-B3F7-4DC9-968B-82CD0D431D86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90968A60-DC7F-4469-9A00-174F3FA3D3F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90968A60-DC7F-4469-9A00-174F3FA3D3F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90968A60-DC7F-4469-9A00-174F3FA3D3F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90968A60-DC7F-4469-9A00-174F3FA3D3F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15558FE4-3D62-43D8-9059-0AD50CCEB412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15558FE4-3D62-43D8-9059-0AD50CCEB412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15558FE4-3D62-43D8-9059-0AD50CCEB412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15558FE4-3D62-43D8-9059-0AD50CCEB412}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F53D382E-BCD6-44B4-914B-407D7965E4CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F53D382E-BCD6-44B4-914B-407D7965E4CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F53D382E-BCD6-44B4-914B-407D7965E4CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F53D382E-BCD6-44B4-914B-407D7965E4CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

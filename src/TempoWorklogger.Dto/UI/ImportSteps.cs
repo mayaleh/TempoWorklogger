@@ -1,7 +1,5 @@
-﻿
-namespace TempoWorklogger.Model
+﻿namespace TempoWorklogger.Dto.UI
 {
-    [Obsolete]
     public enum ImportSteps
     {
         File = 1,

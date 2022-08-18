@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RazorLangVersion>3.0</RazorLangVersion>
+		<Authors>Salim Mayaleh</Authors>
+		<Company>Salim Mayaleh</Company>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Remove="compilerconfig.json" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="BlazorComponentUtilities" Version="1.8.0" />
+		<PackageReference Include="BuildWebCompiler2022" Version="1.14.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="compilerconfig.json" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Update="wwwroot\ui.css">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	
+</Project>

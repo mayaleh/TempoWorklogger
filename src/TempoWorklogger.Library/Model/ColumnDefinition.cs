@@ -1,5 +1,6 @@
 ﻿namespace TempoWorklogger.Library.Model
 {
+    [Obsolete]
     public class ColumnDefinition
     {
         public string Name { get; set; }

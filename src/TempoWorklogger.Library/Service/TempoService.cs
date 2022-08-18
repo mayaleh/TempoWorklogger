@@ -10,6 +10,7 @@ using TempoWorklogger.Library.Model.Tempo;
 
 namespace TempoWorklogger.Library.Service
 {
+    [Obsolete]
     public class TempoService : ITempoService //Maya.AnyHttpClient.ApiService, ITempoService
     {
 #if DEBUG

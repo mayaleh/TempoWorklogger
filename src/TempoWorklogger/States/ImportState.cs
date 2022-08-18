@@ -5,6 +5,7 @@ using TempoWorklogger.Library.Model.Tempo;
 
 namespace TempoWorklogger.States
 {
+    [Obsolete]
     public class ImportState : IDisposable
     {
         public FileInfo File { get; set; }
