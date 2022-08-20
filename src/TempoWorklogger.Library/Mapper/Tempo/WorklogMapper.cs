@@ -1,13 +1,12 @@
 ﻿using Maya.Ext.Rop;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.UserModel;
+using NPOI.SS.UserModel; // TODO remove dependency on this packages in thi project
+using TempoWorklogger.Dto.Storage;
+using TempoWorklogger.Dto.Tempo;
 using TempoWorklogger.Library.Helper;
-using TempoWorklogger.Library.Model;
-using TempoWorklogger.Library.Model.Tempo;
 
 namespace TempoWorklogger.Library.Mapper.Tempo
 {
-    internal static class WorklogMapper
+    public static class WorklogMapper
     {
         const int Zero = 0;
 

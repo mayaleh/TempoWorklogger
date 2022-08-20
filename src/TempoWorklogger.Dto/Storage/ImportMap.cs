@@ -18,6 +18,11 @@
         public string AccessToken { get; set; } = null!;
 
         /// <summary>
+        /// For whitch file type (xlsx, csv)
+        /// </summary>
+        public FileTypeKinds FileType { get; set; }
+
+        /// <summary>
         /// Columns definitions for mapping data to json Tempo schema
         /// </summary>
         public ICollection<ColumnDefinition> ColumnDefinitions { get; set; } = new List<ColumnDefinition>();

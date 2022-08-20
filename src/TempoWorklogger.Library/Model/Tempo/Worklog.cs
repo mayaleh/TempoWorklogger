@@ -3,6 +3,7 @@ using TempoWorklogger.Library.Mapper.Json;
 
 namespace TempoWorklogger.Library.Model.Tempo
 {
+    [Obsolete]
     public class Worklog
     {
         public string AuthorAccountId { get; set; }

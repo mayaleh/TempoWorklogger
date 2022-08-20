@@ -1,9 +1,9 @@
-﻿using TempoWorklogger.Library.Model.Tempo;
-using TempoWorklogger.Library.Model;
+﻿using TempoWorklogger.Dto.Storage;
+using TempoWorklogger.Dto.Tempo;
 
 namespace TempoWorklogger.Library.Mapper.Tempo
 {
-    internal static class AttributeKeyValMapper
+    public static class AttributeKeyValMapper
     {
         public static AttributeKeyVal MapFromColumnDefinitionStaticData(this AttributeKeyVal attributeKeyVal, ColumnDefinition columnDefinition)
         {

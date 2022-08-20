@@ -10,15 +10,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Library", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Library.Tests", "TempoWorklogger.Library.Tests\TempoWorklogger.Library.Tests.csproj", "{512A4A39-B3F7-4DC9-968B-82CD0D431D86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.CQRS", "TempoWorklogger.CQRS\TempoWorklogger.CQRS.csproj", "{90968A60-DC7F-4469-9A00-174F3FA3D3F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.CQRS", "TempoWorklogger.CQRS\TempoWorklogger.CQRS.csproj", "{90968A60-DC7F-4469-9A00-174F3FA3D3F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Contract", "TempoWorklogger.Contract\TempoWorklogger.Contract.csproj", "{15558FE4-3D62-43D8-9059-0AD50CCEB412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Contract", "TempoWorklogger.Contract\TempoWorklogger.Contract.csproj", "{15558FE4-3D62-43D8-9059-0AD50CCEB412}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.UI", "TempoWorklogger.UI\TempoWorklogger.UI.csproj", "{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.UI", "TempoWorklogger.UI\TempoWorklogger.UI.csproj", "{C1840798-55B8-4DF0-978A-ED1DBFBCE34D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Dto", "TempoWorklogger.Dto\TempoWorklogger.Dto.csproj", "{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Dto", "TempoWorklogger.Dto\TempoWorklogger.Dto.csproj", "{A5C1ABD4-9BA3-45B3-B206-EFDD2CC231D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Service", "TempoWorklogger.Service\TempoWorklogger.Service.csproj", "{F53D382E-BCD6-44B4-914B-407D7965E4CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Service", "TempoWorklogger.Service\TempoWorklogger.Service.csproj", "{F53D382E-BCD6-44B4-914B-407D7965E4CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

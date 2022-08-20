@@ -1,13 +1,14 @@
 ﻿using Maya.Ext.Rop;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using TempoWorklogger.Contract.Services;
+using TempoWorklogger.Dto.Storage;
+using TempoWorklogger.Dto.Tempo;
 using TempoWorklogger.Library.Mapper.Tempo;
-using TempoWorklogger.Library.Model;
-using TempoWorklogger.Library.Model.Tempo;
 
-namespace TempoWorklogger.Library.Service
+namespace TempoWorklogger.Service
 {
-    internal class ExcelReaderService : IFileReaderService
+    public class ExcelReaderService : IFileReaderService
     {
         public Task<List<Result<Worklog, (Exception Exception, int RowNr)>>> ReadWorklogFileAsync(MemoryStream fileStream, ImportMap importMap, Action<int> onProgressChanged)
         {
@@ -19,7 +20,7 @@ namespace TempoWorklogger.Library.Service
                 var sheet = xssWorkbook.GetSheetAt(0);
 
                 var worklogsResults = new List<Result<Worklog, (Exception, int)>>();
-                
+
                 var startFrom = importMap.StartFromRow;
                 if (sheet.PhysicalNumberOfRows > sheet.LastRowNum)
                 {
@@ -52,5 +53,4 @@ namespace TempoWorklogger.Library.Service
             }
         }
     }
-
 }
