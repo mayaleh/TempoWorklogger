@@ -1,4 +1,4 @@
-﻿using TempoWorklogger.Dto.Storage;
+﻿using TempoWorklogger.Model.Db;
 
 namespace TempoWorklogger.Contract.UI.ViewModels.Templates
 {

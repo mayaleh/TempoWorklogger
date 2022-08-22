@@ -1,8 +1,8 @@
 ﻿using Maya.Ext.Rop;
-using NPOI.SS.UserModel; // TODO remove dependency on this packages in thi project
-using TempoWorklogger.Dto.Storage;
-using TempoWorklogger.Dto.Tempo;
+using NPOI.SS.UserModel;
 using TempoWorklogger.Library.Helper;
+using TempoWorklogger.Model.Db;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Library.Mapper.Tempo
 {

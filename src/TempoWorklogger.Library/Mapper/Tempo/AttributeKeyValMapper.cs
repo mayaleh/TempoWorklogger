@@ -1,5 +1,5 @@
-﻿using TempoWorklogger.Dto.Storage;
-using TempoWorklogger.Dto.Tempo;
+﻿using TempoWorklogger.Model.Db;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Library.Mapper.Tempo
 {

@@ -42,6 +42,9 @@ namespace TempoWorklogger.UI.Core
         {
             Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this.OnUiChanged = onUiChanged ?? throw new ArgumentNullException(nameof(onUiChanged));
+
+            this.OnIsInit = (v) => { this.OnUiChanged.Invoke(); };
+            this.OnIsBusy = (v) => { this.OnUiChanged.Invoke(); };
         }
 
     }

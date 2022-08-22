@@ -1,8 +1,8 @@
 ﻿using Maya.Ext.Rop;
 using TempoWorklogger.Contract.Services;
-using TempoWorklogger.Dto;
-using TempoWorklogger.Dto.Storage;
-using TempoWorklogger.Dto.Tempo;
+using TempoWorklogger.Model;
+using TempoWorklogger.Model.Db;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Service
 {

@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace TempoWorklogger.Dto.Tempo
+namespace TempoWorklogger.Model.Tempo
 {
     public class DateOnlyJsonConverter : JsonConverter<DateOnly>
     {

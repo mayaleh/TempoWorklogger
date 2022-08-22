@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TempoWorklogger.Contract.Config;
 using TempoWorklogger.Contract.Services;
 using TempoWorklogger.Contract.UI;
 using TempoWorklogger.Service.UI;
@@ -14,6 +15,13 @@ namespace TempoWorklogger.Service
 
             services.AddSingleton<IImportStateService, ImportStateService>();
             //services.AddSingleton<IStorageService, StorageService>();
+            
+            // sqlite db
+            services.AddSingleton<IDbService>(s =>
+            {
+                var appSettings = s.GetRequiredService<IAppConfig>();
+                return new DbService(appSettings.DatabaseFileName);
+            });
             return services;
         }
 

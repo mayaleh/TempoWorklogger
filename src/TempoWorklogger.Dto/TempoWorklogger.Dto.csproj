@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <Folder Include="Jira\" />
-    <Folder Include="Tempo\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TempoWorklogger.Contract\TempoWorklogger.Contract.csproj" />
   </ItemGroup>
 
 </Project>

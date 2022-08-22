@@ -2,9 +2,9 @@
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using TempoWorklogger.Contract.Services;
-using TempoWorklogger.Dto.Storage;
-using TempoWorklogger.Dto.Tempo;
 using TempoWorklogger.Library.Mapper.Tempo;
+using TempoWorklogger.Model.Db;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Service
 {

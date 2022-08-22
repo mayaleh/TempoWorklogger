@@ -13,4 +13,13 @@
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Template\Commands\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\TempoWorklogger.Contract\TempoWorklogger.Contract.csproj" />
+	  <ProjectReference Include="..\TempoWorklogger.Dto\TempoWorklogger.Dto.csproj" />
+	  <ProjectReference Include="..\TempoWorklogger.Library\TempoWorklogger.Library.csproj" />
+	  <ProjectReference Include="..\TempoWorklogger.Model\TempoWorklogger.Model.csproj" />
+	</ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace TempoWorklogger.Dto.Tempo
+namespace TempoWorklogger.Model.Tempo
 {
     public record Result<T>(Metadata metadata, IEnumerable<T> results, string self);
 

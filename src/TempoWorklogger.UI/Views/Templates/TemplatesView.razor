@@ -1,7 +1,75 @@
-﻿
-@*TODO cascadingParameter ITemplatesViewModel*@
-@*TODO abstract components:
- - modal (confirm),
- - container,
- - loader is Ready / Busy
+﻿@*TODO abstract components:
  - error/warn/info or toast messages*@
+
+<!-- Modal -->
+@*
+    TODO:
+        - modal has parameter CommandAsync to be executed after confirmation
+        - should handle command CanExecute
+        - should has loader on executing CommadAsync
+
+*@
+
+@if (string.IsNullOrWhiteSpace(this.errorMessage) == false)
+{
+    <div class="alert alert-danger" role="alert">
+        @this.errorMessage
+    </div>
+    return;
+}
+
+<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteItemModalLabel">Confirm deleting item</h5>
+                <button type="button" @onclick="OnCancelDeleteItemClicked" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you realy want to delete the template? This operation is permanent...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="OnCancelDeleteItemClicked" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" data-bs-dismiss="modal" @onclick="ViewModel.DeleteCommand.Execute" class="btn btn-primary">Yes, I know what i am doing!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="OnCreateClicked">Create</button>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Start from row</th>
+                    <th scope="col">Access token</th>
+                    <th scope="col">Column Definitions</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewModel.Templates)
+                {
+                    <tr>
+                        <th scope="row">@item.Name</th>
+                        <td>@item.StartFromRow</td>
+                        <td>@(string.IsNullOrWhiteSpace(item.AccessToken) ? item.AccessToken.First() + "******" + item.AccessToken.Last() : "empty")</td>
+                        <td>@item.ColumnDefinitions.Count() x cols</td>
+                        <td>
+                            <button class="btn btn-outline-primary" @onclick="(_ => OnEditClicked(item.Name))">Edit</button>
+                            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteItemModal" @onclick="(_ => OnDeleteItemClicked(item))">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
