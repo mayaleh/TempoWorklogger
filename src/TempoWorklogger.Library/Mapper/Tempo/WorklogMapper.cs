@@ -152,6 +152,12 @@ namespace TempoWorklogger.Library.Mapper.Tempo
                 worklog.AuthorAccountId = cell.ToString();
             }
 
+            if (columnDefinition.Name.StartsWith(nameof(AttributeKeyVal)))
+            {
+                var attrKeyVal = new AttributeKeyVal();
+                worklog.Attributes.Add(attrKeyVal.MapFromColumnDefinitionExcelCell(columnDefinition, cell));
+            }
+
             return worklog;
         }
     }
