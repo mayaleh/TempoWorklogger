@@ -15,8 +15,6 @@ namespace TempoWorklogger.Service.Tempo
         const int TimeoutRequestSeconds = 30;
 #endif
 
-        private readonly string accessToken;
-
         public BaseTempoApiService(string accessToken) : base(new Maya.AnyHttpClient.Model.HttpClientConnector
         {
             Endpoint = TempoUri,

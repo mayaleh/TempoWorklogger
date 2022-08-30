@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace TempoWorklogger.Model.Db
 {
@@ -24,6 +25,7 @@ namespace TempoWorklogger.Model.Db
         public FileTypeKinds FileType { get; set; }
 
         /// <inheritdoc/>
+        [OneToMany]
         public ICollection<ColumnDefinition> ColumnDefinitions { get; set; } = new List<ColumnDefinition>();
     }
 }

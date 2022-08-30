@@ -1,6 +1,6 @@
 ﻿using Maya.Ext.Rop;
 using TempoWorklogger.Contract.Services.Tempo;
-using TempoWorklogger.Dto.Tempo;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Service.Tempo
 {

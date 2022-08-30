@@ -21,6 +21,7 @@ namespace TempoWorklogger.Pages.Templates
         {
             this.vm = new TemplatesViewModel(
                 this.Mediator,
+                NavigationManager,
                 () => StateHasChanged());
 
             await this.vm.LoadCommand.Execute();

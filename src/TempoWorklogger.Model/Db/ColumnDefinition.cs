@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace TempoWorklogger.Model.Db
 {
@@ -20,5 +21,11 @@ namespace TempoWorklogger.Model.Db
         
         [MaxLength(48)]
         public string Format { get; set; } = null!;
+
+        [ForeignKey(typeof(ImportMap))]
+        public int ImportMapId { get; set; }
+
+        [ManyToOne]
+        public ImportMap ImportMap { get; set; } = null!;
     }
 }

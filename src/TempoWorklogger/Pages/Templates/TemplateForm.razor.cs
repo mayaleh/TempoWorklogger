@@ -29,7 +29,7 @@ namespace TempoWorklogger.Pages.Templates
 
         protected override void OnInitialized()
         {
-            if (string.IsNullOrWhiteSpace(Name) == false)
+            if (string.IsNullOrWhiteSpace(Name) == false) // on update
             {
                 Name = HttpUtility.UrlDecode(Name);
                 StorageService.ImportMapTemplate.Read()
