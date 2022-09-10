@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Dto", "Temp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Service", "TempoWorklogger.Service\TempoWorklogger.Service.csproj", "{F53D382E-BCD6-44B4-914B-407D7965E4CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempoWorklogger.Model", "TempoWorklogger.Model\TempoWorklogger.Model.csproj", "{E36F0969-27EA-43C9-B8F7-08C8B5539D02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempoWorklogger.Model", "TempoWorklogger.Model\TempoWorklogger.Model.csproj", "{E36F0969-27EA-43C9-B8F7-08C8B5539D02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,24 +1,25 @@
 ﻿using TempoWorklogger.Library.Helper;
+using TempoWorklogger.Library.Service;
 
 namespace TempoWorklogger.CQRS.Template.Commands
 {
-    public record CreateImportMapCommand(ImportMap ImportMap, ICollection<ColumnDefinition> Attributes) : IRequest<unitResult>;
+    public record UpdateImportMapCommand(ImportMap ImportMap, ICollection<ColumnDefinition> Attributes) : IRequest<unitResult>;
 
-    public class CreateImportMapHandler : IRequestHandler<CreateImportMapCommand, unitResult>
+    public class UpdateImportMapHandler : IRequestHandler<UpdateImportMapCommand, unitResult>
     {
         private readonly IDbService dbService;
 
-        public CreateImportMapHandler(IDbService dbService)
+        public UpdateImportMapHandler(IDbService dbService)
         {
             this.dbService = dbService;
         }
 
-        public async Task<unitResult> Handle(CreateImportMapCommand request, CancellationToken cancellationToken)
+        public async Task<unitResult> Handle(UpdateImportMapCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var importMap = request.ImportMap;
-                
+
                 if (string.IsNullOrWhiteSpace(importMap.Name))
                 {
                     return unitResult.Failed(new Exception("Name is required!"));
@@ -31,7 +32,7 @@ namespace TempoWorklogger.CQRS.Template.Commands
 
                 var data = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
                 {
-                    return dbConnection.InsertAsync(importMap);
+                    return dbConnection.UpdateAsync(importMap);
                 }, cancellationToken).ConfigureAwait(false);
 
                 return unitResult.Succeeded(Maya.Ext.Unit.Default);

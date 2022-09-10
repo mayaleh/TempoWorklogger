@@ -1,5 +1,6 @@
 ﻿using Polly;
 using SQLite;
+using System.Threading;
 using TempoWorklogger.Contract.Services;
 using TempoWorklogger.Model.Db;
 
@@ -20,31 +21,31 @@ namespace TempoWorklogger.Service
         //var conn = new SQLiteAsyncConnection(fileName); // made lazy
 
         /// <inheritdoc/>
-        public async ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false)
+        public async ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false, CancellationToken cancellationToken = default)
         {
             var conn = this.Connection;
             if (updateSchema)
             {
-                await ApplyChangesOnShema(conn).ConfigureAwait(false);
+                await ApplyChangesOnShema(conn, cancellationToken).ConfigureAwait(false);
             }
             return conn;
         }
 
         /// <inheritdoc/>
-        public Task<T> AttemptAndRetry<T>(Func<Task<T>> action, int numRetries = 10)
+        public Task<T> AttemptAndRetry<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken, int numRetries = 10)
         {
+            static TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromMilliseconds(Math.Pow(2, attemptNumber));
+            
             return Policy.Handle<SQLite.SQLiteException>()
                 .WaitAndRetryAsync(numRetries, pollyRetryAttempt)
-                .ExecuteAsync(action);
-
-            static TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromMilliseconds(Math.Pow(2, attemptNumber));
+                .ExecuteAsync(action, cancellationToken: cancellationToken);
         }
 
         /// <summary>
         /// Generate the table in the database If the table already exists in the database checks the schema and attempts to update the database schema
         /// </summary>
         /// <param name="conn"></param>
-        private static async Task ApplyChangesOnShema(SQLiteAsyncConnection conn)
+        private static async Task ApplyChangesOnShema(SQLiteAsyncConnection conn, CancellationToken cancellationToken = default)
         {
             await conn.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
 

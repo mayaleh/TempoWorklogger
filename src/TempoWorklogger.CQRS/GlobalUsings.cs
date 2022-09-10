@@ -8,4 +8,5 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
 global using unitResult = Maya.Ext.Rop.Result<Maya.Ext.Unit, System.Exception>;
+global using importMapResult = Maya.Ext.Rop.Result<TempoWorklogger.Model.Db.ImportMap, System.Exception>;
 global using importMapsResult = Maya.Ext.Rop.Result<System.Collections.Generic.IEnumerable<TempoWorklogger.Model.Db.ImportMap>, System.Exception>;

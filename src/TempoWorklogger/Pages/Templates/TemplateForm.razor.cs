@@ -1,21 +1,44 @@
 ﻿using Maya.Ext.Rop;
+using MediatR;
 using Microsoft.AspNetCore.Components;
 using System.Collections;
 using System.Web;
-using TempoWorklogger.Library.Model;
-using TempoWorklogger.Library.Model.Tempo;
+using TempoWorklogger.Contract.UI.ViewModels.Template;
 using TempoWorklogger.Library.Service;
+using TempoWorklogger.ViewModels.Template;
+using TempoWorklogger.ViewModels.Templates;
 
 namespace TempoWorklogger.Pages.Templates
 {
     public partial class TemplateForm
     {
         [Parameter]
-        public string Name { get; set; } = string.Empty;
+        public int TemplateId { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        public IMediator Mediator { get; set; }
+
+        private ITemplateViewModel vm;
+
+        protected override async Task OnInitializedAsync()
+        {
+            this.vm = new TemplateViewModel(
+                this.Mediator,
+                NavigationManager,
+                () => StateHasChanged());
+
+            await this.vm.Commands.LoadCommand.Execute(TemplateId);
+        }
+
+        public void Dispose()
+        {
+            this.vm.Dispose();
+        }
+
+        /*
         [Inject]
         public IStorageService StorageService { get; set; }
 
@@ -142,5 +165,6 @@ namespace TempoWorklogger.Pages.Templates
 
             this.isReady = true;
         }
+        */
     }
 }

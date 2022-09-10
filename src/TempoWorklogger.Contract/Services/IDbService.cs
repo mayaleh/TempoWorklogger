@@ -10,7 +10,7 @@ namespace TempoWorklogger.Contract.Services
         /// </summary>
         /// <param name="updateSchema"></param>
         /// <returns></returns>
-        ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false);
+        ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// await AttemptAndRetry(() => GetConnection().Table<ImportMap>().ToListAsync()).ConfigureAwait(false);
@@ -19,6 +19,6 @@ namespace TempoWorklogger.Contract.Services
         /// <param name="action"></param>
         /// <param name="numRetries"></param>
         /// <returns></returns>
-        Task<T> AttemptAndRetry<T>(Func<Task<T>> action, int numRetries = 10);
+        Task<T> AttemptAndRetry<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken, int numRetries = 10);
     }
 }

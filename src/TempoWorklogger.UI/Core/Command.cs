@@ -1,13 +1,12 @@
-﻿using Maya.Ext.Func;
-using TempoWorklogger.Contract.UI;
+﻿using TempoWorklogger.Contract.UI;
 
 namespace TempoWorklogger.UI.Core
 {
-    public class CommandAsync : BaseCommand, ICommandAsync
+    public class Command : BaseCommand, ICommand
     {
-        private readonly ActionAsync action;
+        private readonly Action action;
 
-        public CommandAsync(ActionAsync action, IObservable<bool>? onCanExecute = null) : base()
+        public Command(Action action, IObservable<bool>? onCanExecute = null) : base()
         {
             this.action = action;
             CanExecute = true;
@@ -21,7 +20,7 @@ namespace TempoWorklogger.UI.Core
             });
         }
 
-        public async Task Execute()
+        public void Execute()
         {
             if (!CanExecute) return;
 
@@ -30,7 +29,7 @@ namespace TempoWorklogger.UI.Core
 
             if (this.action != null)
             {
-                await action.Invoke();
+                action.Invoke();
             }
 
             Executing = false;
@@ -38,11 +37,11 @@ namespace TempoWorklogger.UI.Core
         }
     }
 
-    public class CommandAsync<TParam> : BaseCommand, ICommandAsync<TParam>
+    public class Command<TParam> : BaseCommand, ICommand<TParam>
     {
-        private readonly Func<TParam, Task> action;
+        private readonly Maya.Ext.Func.Action<TParam> action;
 
-        public CommandAsync(Func<TParam, Task> action, IObservable<bool>? onCanExecute = null) : base()
+        public Command(Maya.Ext.Func.Action<TParam> action, IObservable<bool>? onCanExecute = null) : base()
         {
             this.action = action;
             CanExecute = true;
@@ -56,7 +55,7 @@ namespace TempoWorklogger.UI.Core
             });
         }
 
-        public async Task Execute(TParam input)
+        public void Execute(TParam input)
         {
             if (!CanExecute) return;
 
@@ -65,7 +64,7 @@ namespace TempoWorklogger.UI.Core
 
             if (this.action != null)
             {
-                await action.Invoke(input);
+                action.Invoke(input);
             }
 
             Executing = false;

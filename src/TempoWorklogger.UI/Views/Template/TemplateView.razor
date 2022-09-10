@@ -1,0 +1,148 @@
+﻿@if (string.IsNullOrWhiteSpace(this.errorMessage) == false)
+{
+    <div class="alert alert-danger  mb-2" role="alert">
+        @this.errorMessage
+    </div>
+}
+
+<div class="row align-items-center justify-content-center">
+    <div class=" col col-sm-11 col-md-9">
+        <div class="row mt-3 mb-2">
+            <div class="col">
+                <h5>Basic</h5>
+            </div>
+        </div>
+
+        <div class="row mb-2 mt-1">
+            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                <label for="@nameof(ViewModel.ImportMapModel.Name)Label" class="form-label">Name</label>
+            </div>
+            <div class="col">
+                <input @bind="Model.Name" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)Label" placeholder="for ex. my CSV import">
+            </div>
+        </div>
+
+        <div class="row mb-2 mt-1">
+            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                <label for="@nameof(ViewModel.ImportMapModel.AccessToken)Label" class="form-label">Access token</label>
+            </div>
+            <div class="col">
+                <input @bind="Model.AccessToken" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.AccessToken)Label" placeholder="Tempo user access token">
+            </div>
+        </div>
+
+        <div class="row mb-2 mt-1">
+            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                <label for="@nameof(ViewModel.ImportMapModel.Name)StartFromRow" class="form-label">Read from row</label>
+            </div>
+            <div class="col">
+                <input @bind="Model.StartFromRow" type="number" step="1" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)StartFromRow" placeholder="for skipping the header row, enter nr 2">
+            </div>
+        </div>
+
+        <div class="row mt-4 mb-2">
+            <div class="col">
+                <h5>Properties</h5>
+            </div>
+        </div>
+        @foreach (var columnDefinition in ViewModel.ImportMapModel.ColumnDefinitions)
+        {
+            <div class="row mb-2">
+                <div class="col col-sm-4 col-md-3 col-lg-2">
+                    <label for="@(columnDefinition.Name)Value" class="form-label">@columnDefinition.Name</label>
+                </div>
+                <div class="col-auto">
+                    <div class="form-check">
+                        <input @bind="columnDefinition.IsStatic" class="form-check-input" type="checkbox" value="" id="@(columnDefinition.Name)CheckIsStatic">
+                        <label class="form-check-label" for="@(columnDefinition.Name)CheckIsStatic">
+                            The value is static
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    @if (columnDefinition.IsStatic)
+                    {
+                        <input @bind="columnDefinition.Value" type="text" class="form-control" id="@(columnDefinition.Name)Value" placeholder="your static value">
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <input @bind="columnDefinition.Position" type="text" class="form-control" id="@(columnDefinition.Name)Value" placeholder="eg.: B">
+                            </div>
+
+                            <div class="col">
+                                <input @bind="columnDefinition.Format" type="text" class="form-control" id="@(columnDefinition.Name)Format" placeholder="Format eg. YYYY-MM-DD">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @*Attrinbutes:*@
+        <div class="row mt-4 mb-2">
+            <div class="col">
+                <h5>Attributes</h5>
+            </div>
+        </div>
+
+        @foreach (var columnDefinition in ViewModel.AttributesModel)
+        {
+            <div class="row mb-2">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="@(columnDefinition.Name)Name" class="form-label">Name</label>
+                        </div>
+                        <div class="col">
+                            <input @bind="columnDefinition.Name" type="text" class="form-control" id="@(columnDefinition.Name)Name" placeholder="property key in JSON">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="form-check">
+                        <input @bind="columnDefinition.IsStatic" class="form-check-input" type="checkbox" value="" id="@(columnDefinition.Name)CheckIsStatic">
+                        <label class="form-check-label" for="@(columnDefinition.Name)CheckIsStatic">
+                            The value is static
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    @if (columnDefinition.IsStatic)
+                    {
+                        <input @bind="columnDefinition.Value" type="text" class="form-control" id="@(columnDefinition.Name)Value" placeholder="your static value">
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <input @bind="columnDefinition.Position" type="text" class="form-control" id="@(columnDefinition.Name)Value" placeholder="eg.: B">
+                            </div>
+
+                            <div class="col">
+                                <input @bind="columnDefinition.Format" type="text" class="form-control" id="@(columnDefinition.Name)Format" placeholder="Format eg. YYYY-MM-DD">
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-auto">
+                    <button title="remove attribute" disabled="@(!ViewModel.Commands.RemoveAttributeCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.RemoveAttributeCommand.Execute(columnDefinition))" type="button" class="btn btn-outline-warning">X</button>
+                </div>
+            </div>
+        }
+
+        <div class="row mb-2">
+            <div class="col">
+                <button class="btn btn-outline-primary" type="button" disabled="@(!ViewModel.Commands.AddAttributeCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.AddAttributeCommand.Execute())">Add attribute</button>
+            </div>
+        </div>
+
+        <div class="row mb-3 mt-2">
+            <div class="col">
+                <button class="btn btn-primary" type="button" disabled="@(!ViewModel.Commands.SaveCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.SaveCommand.Execute())">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

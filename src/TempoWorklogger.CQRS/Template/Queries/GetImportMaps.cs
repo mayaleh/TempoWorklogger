@@ -1,6 +1,5 @@
 ﻿namespace TempoWorklogger.CQRS.Template.Queries
 {
-
     public record GetImportMapsQuery() : IRequest<importMapsResult>;
 
     public class GetImportMapsQueryHandler : IRequestHandler<GetImportMapsQuery, importMapsResult>
@@ -19,11 +18,11 @@
                 var dbConnection = await this.dbService.GetConnection()
                     .ConfigureAwait(false);
                 
-                var data = await this.dbService.AttemptAndRetry(() =>
+                var data = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
                 {
                     return dbConnection.Table<ImportMap>()
                         .ToListAsync();
-                }).ConfigureAwait(false);
+                }, cancellationToken).ConfigureAwait(false);
 
                 return importMapsResult.Succeeded(data ?? new List<ImportMap>());
             }
