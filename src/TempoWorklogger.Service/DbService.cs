@@ -1,6 +1,5 @@
 ﻿using Polly;
 using SQLite;
-using System.Threading;
 using TempoWorklogger.Contract.Services;
 using TempoWorklogger.Model.Db;
 
@@ -51,6 +50,8 @@ namespace TempoWorklogger.Service
 
             await conn.CreateTableAsync<ColumnDefinition>().ConfigureAwait(false);
             await conn.CreateTableAsync<ImportMap>().ConfigureAwait(false);
+            await conn.CreateTableAsync<CustomAttributeKeyVal>().ConfigureAwait(false);
+            await conn.CreateTableAsync<Worklog>().ConfigureAwait(false);
         }
     }
 }

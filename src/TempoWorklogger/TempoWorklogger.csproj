@@ -71,7 +71,6 @@
 	  <Folder Include="ViewModels\ImportWizard\TemplateSelection\" />
 	  <Folder Include="ViewModels\ImportWizard\Progress\" />
 	  <Folder Include="ViewModels\Worklog\" />
-	  <Folder Include="ViewModels\Worklogs\" />
 	  <Folder Include="wwwroot\js\" />
 	</ItemGroup>
 

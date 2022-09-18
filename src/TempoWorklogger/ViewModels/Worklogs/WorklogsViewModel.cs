@@ -1,25 +1,24 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
-using System.Web;
 using TempoWorklogger.Contract.UI;
-using TempoWorklogger.Contract.UI.ViewModels.Templates;
-using TempoWorklogger.CQRS.Template.Queries;
+using TempoWorklogger.Contract.UI.ViewModels.Worklogs;
+using TempoWorklogger.CQRS.Worklogs.Queries;
 using TempoWorklogger.Model.Db;
 using TempoWorklogger.UI.Core;
 using Command = TempoWorklogger.UI.Core.Command;
 
-namespace TempoWorklogger.ViewModels.Templates
+namespace TempoWorklogger.ViewModels.Worklogs
 {
-    public sealed class TemplatesViewModel : BaseViewModel, ITemplatesViewModel // maybe extract as abstract GridDataViewModel<TModel> with the CRUD commands
+    public sealed class WorklogsViewModel : BaseViewModel, IWorklogsViewModel
     {
         private readonly NavigationManager navigationManager;
 
-        public TemplatesViewModel(IMediator mediator, NavigationManager navigationManager, Action onUiChanged) : base(mediator, onUiChanged)
+        public WorklogsViewModel(IMediator mediator, NavigationManager navigationManager, Action onUiChanged) : base(mediator, onUiChanged)
         {
-            // TODO commands and actions
+            // TODO Delete command
             LoadCommand = new CommandAsync(Load);
             CreateCommand = new Command(Create);
-            EditCommand = new TempoWorklogger.UI.Core.Command<string>(Edit);
+            EditCommand = new TempoWorklogger.UI.Core.Command<long>(Edit);
 
             LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
             CreateCommand!.OnExecuteChanged += this.CreateCommand_OnExecuteChanged;
@@ -27,13 +26,13 @@ namespace TempoWorklogger.ViewModels.Templates
             this.navigationManager = navigationManager;
         }
 
-        public List<ImportMap> Templates { get; private set; }
+        public List<Worklog> Worklogs { get; private set; }
 
         public ICommandAsync LoadCommand { get; }
 
-        public ICommandAsync<string> DeleteCommand { get; }
+        public ICommandAsync<long> DeleteCommand { get; }
 
-        public ICommand<string> EditCommand { get; }
+        public ICommand<long> EditCommand { get; }
 
         public ICommand CreateCommand { get; }
 
@@ -59,7 +58,7 @@ namespace TempoWorklogger.ViewModels.Templates
 
         private async Task<Maya.Ext.Unit> Load()
         {
-            var result = await this.Mediator.Send(new GetImportMapsQuery());
+            var result = await this.Mediator.Send(new GetWorklogsQuery());
 
             if (result.IsFailure)
             {
@@ -67,22 +66,22 @@ namespace TempoWorklogger.ViewModels.Templates
                 //this.notifyMessage?.Error(result.ErrMessage);
             }
 
-            Templates = result.Success?.ToList() ?? new List<ImportMap>();
+            Worklogs = result.Success?.ToList() ?? new List<Worklog>();
 
             return Maya.Ext.Unit.Default;
         }
 
         private void Create()
         {
-            this.navigationManager.NavigateTo("/templates/create");
+            this.navigationManager.NavigateTo("/worklogs/create");
             //return Maya.Ext.Unit.Default;
         }
 
-        private Maya.Ext.Unit Edit(string name)
+        private Maya.Ext.Unit Edit(long id)
         {
-            var friendlyName = HttpUtility.UrlEncodeUnicode(name);
-            this.navigationManager.NavigateTo($"/templates/{friendlyName}/edit");
+            this.navigationManager.NavigateTo($"/worklogs/{id}/edit");
             return Maya.Ext.Unit.Default;
         }
+
     }
 }

@@ -21,4 +21,9 @@
 	  <ProjectReference Include="..\TempoWorklogger.Contract\TempoWorklogger.Contract.csproj" />
 	  <ProjectReference Include="..\TempoWorklogger.Dto\TempoWorklogger.Dto.csproj" />
 	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Mapper\Tempo\" />
+	</ItemGroup>
 </Project>

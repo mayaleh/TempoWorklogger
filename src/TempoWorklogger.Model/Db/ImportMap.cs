@@ -3,28 +3,36 @@ using SQLiteNetExtensions.Attributes;
 
 namespace TempoWorklogger.Model.Db
 {
-    /// <inheritdoc/>
-    public class ImportMap //: IImportMap
+    public class ImportMap
     {
-
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Name of the import
+        /// </summary>
         [MaxLength(255)]
         public string Name { get; set; } = null!;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Start read the import from row (typically from excel or csv row)
+        /// </summary>
         public int StartFromRow { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Access token of the Tempo importer account
+        /// </summary>
         [MaxLength(255)]
         public string AccessToken { get; set; } = null!;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Import for file type (csv or xlsx)
+        /// </summary>
         public FileTypeKinds FileType { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Columns map definitions
+        /// </summary>
         [OneToMany]
         public ICollection<ColumnDefinition> ColumnDefinitions { get; set; } = new List<ColumnDefinition>();
     }

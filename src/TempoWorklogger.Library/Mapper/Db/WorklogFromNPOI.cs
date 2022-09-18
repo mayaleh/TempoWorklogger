@@ -2,11 +2,10 @@
 using NPOI.SS.UserModel;
 using TempoWorklogger.Library.Helper;
 using TempoWorklogger.Model.Db;
-using TempoWorklogger.Model.Tempo;
 
-namespace TempoWorklogger.Library.Mapper.Tempo
+namespace TempoWorklogger.Library.Mapper.Db
 {
-    public static class WorklogMapper
+    public static class WorklogFromNPOI
     {
         const int Zero = 0;
 
@@ -97,9 +96,9 @@ namespace TempoWorklogger.Library.Mapper.Tempo
                 worklog.AuthorAccountId = columnDefinition.Value;
             }
 
-            if (columnDefinition.Name.StartsWith(nameof(AttributeKeyVal)))
+            if (columnDefinition.Name.StartsWith(ModelsConstant.AttributePrefix))
             {
-                var attrKeyVal = new AttributeKeyVal();
+                var attrKeyVal = new CustomAttributeKeyVal();
                 worklog.Attributes.Add(attrKeyVal.MapFromColumnDefinitionStaticData(columnDefinition));
             }
 
@@ -149,6 +148,13 @@ namespace TempoWorklogger.Library.Mapper.Tempo
             if (columnDefinition.Name == nameof(Worklog.AuthorAccountId))
             {
                 worklog.AuthorAccountId = cell.ToString();
+            }
+
+
+            if (columnDefinition.Name.StartsWith(ModelsConstant.AttributePrefix))
+            {
+                var attrKeyVal = new CustomAttributeKeyVal();
+                worklog.Attributes.Add(attrKeyVal.MapFromColumnDefinitionExcelCell(columnDefinition, cell));
             }
 
             return worklog;

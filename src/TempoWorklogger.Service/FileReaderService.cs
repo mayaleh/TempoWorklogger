@@ -2,7 +2,6 @@
 using TempoWorklogger.Contract.Services;
 using TempoWorklogger.Model;
 using TempoWorklogger.Model.Db;
-using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Service
 {
