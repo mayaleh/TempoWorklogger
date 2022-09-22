@@ -16,7 +16,7 @@ namespace TempoWorklogger.ViewModels.Template
         {
             this.navigationManager = navigationManager;
             Actions = new TemplateActions(this);
-            Commands = new TemplateCommands(Actions);
+            Commands = new TemplateCommands(this);
         }
 
         public ITemplateCommands Commands { get; }

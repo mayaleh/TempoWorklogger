@@ -6,23 +6,38 @@ namespace TempoWorklogger.ViewModels.Template
 {
     internal class TemplateCommands : ITemplateCommands
     {
-        public TemplateCommands(ITemplateActions actions)
+        private readonly ITemplateViewModel viewModel;
+
+        public TemplateCommands(ITemplateViewModel viewModel)
         {
-            LoadCommand = new CommandAsync<int?>(actions.Load);
-            SaveCommand = new CommandAsync(actions.Save);
-            AddAttributeCommand = new CommandAsync(actions.AddAttribute);
-            RemoveAttributeCommand = new CommandAsync<Model.Db.ColumnDefinition>(actions.RemoveAttribute);
+            this.viewModel = viewModel;
+
+            InitCommands();
         }
-        /// <inheritdoc/>
-        public ICommandAsync<int?> LoadCommand { get; }
+
+        private void InitCommands()
+        {
+            LoadCommand = new CommandAsync<int?>(viewModel.Actions.Load);
+            SaveCommand = new CommandAsync(viewModel.Actions.Save);
+            AddAttributeCommand = new CommandAsync(viewModel.Actions.AddAttribute);
+            RemoveAttributeCommand = new CommandAsync<Model.Db.ColumnDefinition>(viewModel.Actions.RemoveAttribute);
+
+
+            LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
+        }
 
         /// <inheritdoc/>
-        public ICommandAsync SaveCommand { get; }
+        public ICommandAsync<int?> LoadCommand { get; private set; }
 
         /// <inheritdoc/>
-        public ICommandAsync AddAttributeCommand { get; }
+        public ICommandAsync SaveCommand { get; private set; }
 
         /// <inheritdoc/>
-        public ICommandAsync<Model.Db.ColumnDefinition> RemoveAttributeCommand { get; }
+        public ICommandAsync AddAttributeCommand { get; private set; }
+
+        /// <inheritdoc/>
+        public ICommandAsync<Model.Db.ColumnDefinition> RemoveAttributeCommand { get; private set; }
+
+        private void LoadCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
     }
 }
