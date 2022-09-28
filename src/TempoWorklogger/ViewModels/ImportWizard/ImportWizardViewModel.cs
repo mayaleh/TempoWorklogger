@@ -1,4 +1,5 @@
-﻿using TempoWorklogger.Contract.UI.ViewModels.ImportWizard;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using TempoWorklogger.Contract.UI.ViewModels.ImportWizard;
 using TempoWorklogger.Model.UI;
 
 namespace TempoWorklogger.ViewModels.ImportWizard
@@ -10,6 +11,8 @@ namespace TempoWorklogger.ViewModels.ImportWizard
         public IImportWizardActions Actions { get; }
         
         public IImportWizardCommands Commands { get; }
+
+        public IBrowserFile SelectedFile { get; set;  }
 
         public ImportWizardViewModel()
         {

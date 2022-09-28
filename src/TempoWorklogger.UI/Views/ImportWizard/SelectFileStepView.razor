@@ -1,0 +1,21 @@
+﻿<div class="row mb-2 mt-2">
+    <div class="col-12">
+        <InputFile class="form-control form-control-lg" id="importFile" OnChange="HandleFileSelected" />
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col-12">
+        <h4>Selected file</h4>
+        <ul>
+            <li>
+                <ul>
+                    <li>Name: @ViewModel.ImportWizardState.File.Name</li>
+                    <li>Last modified: @ViewModel.ImportWizardState.File.LastModified.ToString()</li>
+                    <li>Size (bytes): @ViewModel.ImportWizardState.File.Size</li>
+                    <li>Content type: @ViewModel.ImportWizardState.File.ContentType</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>

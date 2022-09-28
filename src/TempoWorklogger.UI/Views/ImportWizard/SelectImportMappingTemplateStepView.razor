@@ -1,0 +1,72 @@
+﻿<div class="row mt-3 mb-3">
+    <div class="col-auto">
+        <label for="templateSelect" class="form-label pt-1"><strong>Template</strong></label>
+    </div>
+    <div class="col">
+        <select id="templateSelect" class="form-select" aria-label="Template import select" @bind="selectedMap">
+            <option value="@(default(int))">-- Select template --</option>
+            @foreach (var map in ViewModel.ImportMappingTemplates)
+            {
+                <option value="@map.Id">@map.Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+@if (selectedMap != default(int))
+{
+    <div class="row mb-2">
+        <div class="col-12">
+            <h4 class="mb-2">Selected import mapping template</h4>
+            <p><strong>Starting from row:</strong> @ViewModel.ImportWizardState.SelectedImportMap.StartFromRow</p>
+
+            <p>Constants (for all worklogs always the same value):</p>
+            <ul class="mt-1">
+                @foreach (var columnDef in StaticValues)
+                {
+                    <li><strong>@columnDef.Name:</strong> @columnDef.Value</li>
+                }
+            </ul>
+            <p>Excel template:</p>
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr class="cells-positions">
+                        <td scope="col">#</td>
+                        @foreach (var columnDef in ExcelCells)
+                        {
+                            <td scope="col">@columnDef.Position</td>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="cells-positions">
+                        <td scope="row">
+                            @if (ViewModel.ImportWizardState.SelectedImportMap.StartFromRow > 1)
+                            {
+                                <span>1</span>
+                            }
+                        </td>
+
+                        @foreach (var columnDef in ExcelCells)
+                        {
+                            <td><strong>@columnDef.Name</strong></td>
+                        }
+                    </tr>
+                    @if (ViewModel.ImportWizardState.SelectedImportMap.StartFromRow > 1)
+                    {
+                        <tr>
+                            <td scope="row" class="startFromRow">
+
+                                <span>@ViewModel.ImportWizardState.SelectedImportMap.StartFromRow</span>
+                            </td>
+                            @foreach (var columnDef in ExcelCells)
+                            {
+                                <td>@columnDef.Name-value</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

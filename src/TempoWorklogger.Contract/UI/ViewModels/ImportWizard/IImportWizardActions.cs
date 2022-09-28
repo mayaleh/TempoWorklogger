@@ -1,4 +1,6 @@
-﻿namespace TempoWorklogger.Contract.UI.ViewModels.ImportWizard
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace TempoWorklogger.Contract.UI.ViewModels.ImportWizard
 {
     public interface IImportWizardActions
     {
@@ -7,5 +9,7 @@
         Task<Maya.Ext.Unit> PreviousStep();
 
         Task<Maya.Ext.Unit> CancelImport();
+
+        void SelectedFileChanged(IBrowserFile selectedFile);
     }
 }

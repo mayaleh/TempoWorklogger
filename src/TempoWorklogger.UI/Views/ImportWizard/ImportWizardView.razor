@@ -1,5 +1,23 @@
-﻿<h3>ImportWizardView</h3>
+﻿<StepsView ActualStep="ViewModel.ImportWizardState.CurrentStep" />
 
-@code {
+<div class="row">
+    @*TODO: button Next step to component and customize text, is available, is disabled...etc*@
+    <div class="col-auto">
+        <button class="btn btn-primary" disabled="@(!ViewModel.Commands.NextStepCommand.CanExecute)" @onclick="@ViewModel.Commands.NextStepCommand">Continue  <i class="fa fa-arrow-right"></i></button>
+    </div>
+    <div class="col-auto">
+        @*<CancalWizard />*@
+    </div>
+    <div class="col-auto">
+        @*<GoBack PrevPage="/import/select-file" />*@
+    </div>
+</div>
 
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.File)
+{
+    <SelectFileStepView />
 }
+
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Template) { }
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Preview) { }
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Process) { }

@@ -66,10 +66,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ViewModels\ImportWizard\ConfirmLoadedWorklogs\" />
-	  <Folder Include="ViewModels\ImportWizard\FileSelection\" />
-	  <Folder Include="ViewModels\ImportWizard\TemplateSelection\" />
-	  <Folder Include="ViewModels\ImportWizard\Progress\" />
 	  <Folder Include="ViewModels\Worklog\" />
 	  <Folder Include="wwwroot\js\" />
 	</ItemGroup>
