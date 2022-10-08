@@ -1,4 +1,4 @@
-﻿@page "/import/processing"
+﻿@*@page "/import/processing"
 @using TempoWorklogger.Library.Model.Tempo
 
 <StepFlows ActualStep="Model.ImportSteps.Process" />
@@ -96,7 +96,6 @@
                     @if (worklogResponseResult.IsFailure)
                     {
                         <tr class="bg-danger">
-                            @*TODO: which one failled?*@
                             <td colspan="5">
                                 For worklog:@(worklogResponseResult.Failure.Item1.IssueKey)
                                 @(worklogResponseResult.Failure.Item1.StartDate)
@@ -121,4 +120,4 @@
             </tbody>
         </table>
     </div>
-</div>
+</div>*@

@@ -3,7 +3,7 @@
 <div class="row">
     @*TODO: button Next step to component and customize text, is available, is disabled...etc*@
     <div class="col-auto">
-        <button class="btn btn-primary" disabled="@(!ViewModel.Commands.NextStepCommand.CanExecute)" @onclick="@ViewModel.Commands.NextStepCommand">Continue  <i class="fa fa-arrow-right"></i></button>
+        <button class="btn btn-primary" disabled="@(!ViewModel.Commands.NextStepCommand.CanExecute)" @onclick="@ViewModel.Commands.NextStepCommand.Execute">Continue  <i class="fa fa-arrow-right"></i></button>
     </div>
     <div class="col-auto">
         @*<CancalWizard />*@
@@ -13,11 +13,30 @@
     </div>
 </div>
 
+@if (string.IsNullOrEmpty(ViewModel.ErrorMessage) == false)
+{
+    <div class="row mt-2 mb-3 align-items-center justify-content-center">
+        <div class="col-auto">
+            <div class="alert alert-danger" role="alert">
+                @ViewModel.ErrorMessage
+            </div>
+        </div>
+    </div>
+}
+
 @if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.File)
 {
     <SelectFileStepView />
 }
 
-@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Template) { }
-@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Preview) { }
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Template)
+{
+    <SelectImportMappingTemplateStepView />
+}
+
+@if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Preview)
+{
+    <ConfirmPreviewStepView />    
+}
+
 @if (ViewModel.ImportWizardState.CurrentStep == Model.UI.ImportWizardStepKind.Process) { }

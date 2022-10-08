@@ -1,7 +1,4 @@
-﻿using ObjCRuntime;
-using UIKit;
-
-namespace TempoWorklogger;
+﻿namespace TempoWorklogger;
 
 public class Program
 {

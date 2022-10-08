@@ -1,7 +1,4 @@
-﻿using Android.App;
-using Android.Runtime;
-
-namespace TempoWorklogger;
+﻿namespace TempoWorklogger;
 
 [Application]
 public class MainApplication : MauiApplication

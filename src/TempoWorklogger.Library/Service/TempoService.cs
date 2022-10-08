@@ -1,17 +1,12 @@
-﻿using Maya.AnyHttpClient;
-using Maya.AnyHttpClient.Model;
+﻿using Maya.AnyHttpClient.Model;
 using Maya.Ext.Rop;
-using Microsoft.Extensions.Logging;
-using NPOI.POIFS.Crypt.Dsig;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using TempoWorklogger.Library.Model.Tempo;
 
 namespace TempoWorklogger.Library.Service
 {
     [Obsolete]
-    public class TempoService : ITempoService //Maya.AnyHttpClient.ApiService, ITempoService
+    public class TempoService // : ITempoService //Maya.AnyHttpClient.ApiService, ITempoService
     {
 #if DEBUG
         //const string TempoUri = "https://localhost:7201";
@@ -162,7 +157,8 @@ namespace TempoWorklogger.Library.Service
         /// </summary>
         /// <param name="worklog"></param>
         /// <returns></returns>
-        public async Task<Result<WorklogResponse, Exception>> CreateWorklog(Worklog worklog)
+        
+        /*public async Task<Result<WorklogResponse, Exception>> CreateWorklog(Worklog worklog)
         {
             try
             {
@@ -175,6 +171,6 @@ namespace TempoWorklogger.Library.Service
             {
                 return Result<WorklogResponse, Exception>.Failed(e);
             }
-        }
+        }*/
     }
 }

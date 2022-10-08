@@ -1,0 +1,11 @@
+﻿
+<div>
+    <div class="col-12 mb-2">
+        <h4>@this.ProcessMessage @this.progressState / 100%</h4>
+    </div>
+    <div class="col-12">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.progressState" aria-valuemin="0" aria-valuemax="100" style="width: @(this.progressState)%"></div>
+        </div>
+    </div>
+</div>

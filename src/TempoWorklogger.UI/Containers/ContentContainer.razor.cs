@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Reflection;
 
 namespace TempoWorklogger.UI.Containers
 {

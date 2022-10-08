@@ -14,12 +14,15 @@ namespace TempoWorklogger.ViewModels.Templates
     {
         private readonly NavigationManager navigationManager;
 
+        private ImportMap toBeDeleted = new();
+
         public TemplatesViewModel(IMediator mediator, NavigationManager navigationManager, Action onUiChanged) : base(mediator, onUiChanged)
         {
             // TODO commands and actions
             LoadCommand = new CommandAsync(Load);
             CreateCommand = new Command(Create);
             EditCommand = new TempoWorklogger.UI.Core.Command<string>(Edit);
+            PrepareDeleteCommand = new TempoWorklogger.UI.Core.Command<ImportMap>(DeletePrepare);
 
             LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
             CreateCommand!.OnExecuteChanged += this.CreateCommand_OnExecuteChanged;
@@ -27,15 +30,17 @@ namespace TempoWorklogger.ViewModels.Templates
             this.navigationManager = navigationManager;
         }
 
-        public List<ImportMap> Templates { get; private set; }
+        public List<ImportMap> Templates { get; private set; } = new List<ImportMap>();
 
         public ICommandAsync LoadCommand { get; }
-
-        public ICommandAsync<string> DeleteCommand { get; }
 
         public ICommand<string> EditCommand { get; }
 
         public ICommand CreateCommand { get; }
+
+        public ICommand<ImportMap> PrepareDeleteCommand { get; }
+
+        ICommandAsync ITemplatesViewModel.DeleteCommand { get; }
 
         public void Dispose()
         {
@@ -59,6 +64,7 @@ namespace TempoWorklogger.ViewModels.Templates
 
         private async Task<Maya.Ext.Unit> Load()
         {
+            //this.IsInit = true;
             var result = await this.Mediator.Send(new GetImportMapsQuery());
 
             if (result.IsFailure)
@@ -69,13 +75,25 @@ namespace TempoWorklogger.ViewModels.Templates
 
             Templates = result.Success?.ToList() ?? new List<ImportMap>();
 
+            //this.IsInit = false;
             return Maya.Ext.Unit.Default;
         }
 
         private void Create()
         {
-            this.navigationManager.NavigateTo("/templates/create");
+            this.navigationManager.NavigateTo("/template/create");
             //return Maya.Ext.Unit.Default;
+        }
+
+        private Maya.Ext.Unit DeletePrepare(ImportMap importMap)
+        {
+            this.toBeDeleted = importMap;
+            return Maya.Ext.Unit.Default;
+        }
+
+        private async Task DeleteExecutingConfirmed()
+        {
+            // TBD
         }
 
         private Maya.Ext.Unit Edit(string name)

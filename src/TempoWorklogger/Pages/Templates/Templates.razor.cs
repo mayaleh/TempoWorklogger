@@ -1,7 +1,5 @@
-﻿using Maya.Ext.Rop;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Components;
-using System.Web;
 using TempoWorklogger.Contract.UI.ViewModels.Templates;
 using TempoWorklogger.ViewModels.Templates;
 

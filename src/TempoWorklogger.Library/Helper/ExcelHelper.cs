@@ -1,11 +1,4 @@
-﻿using NPOI.SS.Formula.Functions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TempoWorklogger.Library.Helper
+﻿namespace TempoWorklogger.Library.Helper
 {
     public static class ExcelHelper
     {

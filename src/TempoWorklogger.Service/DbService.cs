@@ -7,7 +7,6 @@ namespace TempoWorklogger.Service
 {
     public class DbService : IDbService
     {
-
         private readonly Lazy<SQLiteAsyncConnection> databaseConnectionHolder;
         private SQLiteAsyncConnection Connection => this.databaseConnectionHolder.Value;
 
@@ -20,7 +19,7 @@ namespace TempoWorklogger.Service
         //var conn = new SQLiteAsyncConnection(fileName); // made lazy
 
         /// <inheritdoc/>
-        public async ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false, CancellationToken cancellationToken = default)
+        public async ValueTask<SQLiteAsyncConnection> GetConnection(CancellationToken cancellationToken, bool updateSchema = false)
         {
             var conn = this.Connection;
             if (updateSchema)

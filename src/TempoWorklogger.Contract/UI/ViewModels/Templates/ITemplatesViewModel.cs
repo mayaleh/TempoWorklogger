@@ -8,7 +8,9 @@ namespace TempoWorklogger.Contract.UI.ViewModels.Templates
 
         ICommandAsync LoadCommand { get; }
 
-        ICommandAsync<string> DeleteCommand { get; }
+        ICommand<ImportMap> PrepareDeleteCommand { get; }
+
+        ICommandAsync DeleteCommand { get; }
 
         ICommand<string> EditCommand { get; }
 

@@ -1,4 +1,4 @@
-﻿@using TempoWorklogger.Model
+﻿@*@using TempoWorklogger.Model
 <header class="col-md-auto col-12 process-bar" style="max-width: 100%">
     <ul id="progressbar" class="text-cetner">
         <li class="@(current >= (int)ImportSteps.File ? "active" : "")" id="file"><strong>File</strong></li>
@@ -13,4 +13,4 @@
 
     [Parameter]
     public ImportSteps ActualStep { get => (ImportSteps)current; set => current = (int)value; }
-}
+}*@

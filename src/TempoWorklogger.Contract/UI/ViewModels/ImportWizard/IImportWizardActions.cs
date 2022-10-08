@@ -10,6 +10,8 @@ namespace TempoWorklogger.Contract.UI.ViewModels.ImportWizard
 
         Task<Maya.Ext.Unit> CancelImport();
 
+        Task<Maya.Ext.Unit> ReadFileContent();
+
         void SelectedFileChanged(IBrowserFile selectedFile);
     }
 }

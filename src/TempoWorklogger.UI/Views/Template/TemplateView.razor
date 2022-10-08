@@ -18,7 +18,7 @@
                 <label for="@nameof(ViewModel.ImportMapModel.Name)Label" class="form-label">Name</label>
             </div>
             <div class="col">
-                <input @bind="Model.Name" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)Label" placeholder="for ex. my CSV import">
+                <input @bind="ViewModel.ImportMapModel.Name" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)Label" placeholder="for ex. my CSV import">
             </div>
         </div>
 
@@ -27,7 +27,7 @@
                 <label for="@nameof(ViewModel.ImportMapModel.AccessToken)Label" class="form-label">Access token</label>
             </div>
             <div class="col">
-                <input @bind="Model.AccessToken" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.AccessToken)Label" placeholder="Tempo user access token">
+                <input @bind="ViewModel.ImportMapModel.AccessToken" type="text" class="form-control" id="@nameof(ViewModel.ImportMapModel.AccessToken)Label" placeholder="Tempo user access token">
             </div>
         </div>
 
@@ -36,7 +36,7 @@
                 <label for="@nameof(ViewModel.ImportMapModel.Name)StartFromRow" class="form-label">Read from row</label>
             </div>
             <div class="col">
-                <input @bind="Model.StartFromRow" type="number" step="1" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)StartFromRow" placeholder="for skipping the header row, enter nr 2">
+                <input @bind="ViewModel.ImportMapModel.StartFromRow" type="number" step="1" class="form-control" id="@nameof(ViewModel.ImportMapModel.Name)StartFromRow" placeholder="for skipping the header row, enter nr 2">
             </div>
         </div>
 

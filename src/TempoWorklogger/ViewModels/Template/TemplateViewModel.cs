@@ -1,5 +1,4 @@
-﻿using Android.Icu.Text;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using TempoWorklogger.Contract.UI.ViewModels.Template;
 using TempoWorklogger.Model.Db;
@@ -29,7 +28,7 @@ namespace TempoWorklogger.ViewModels.Template
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Commands.Dispose();
         }
     }
 }

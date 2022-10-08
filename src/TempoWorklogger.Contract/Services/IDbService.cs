@@ -10,7 +10,7 @@ namespace TempoWorklogger.Contract.Services
         /// </summary>
         /// <param name="updateSchema"></param>
         /// <returns></returns>
-        ValueTask<SQLiteAsyncConnection> GetConnection(bool updateSchema = false, CancellationToken cancellationToken = default);
+        ValueTask<SQLiteAsyncConnection> GetConnection(CancellationToken cancellationToken, bool updateSchema = false);
 
         /// <summary>
         /// await AttemptAndRetry(() => GetConnection().Table<ImportMap>().ToListAsync()).ConfigureAwait(false);

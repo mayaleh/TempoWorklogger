@@ -1,6 +1,8 @@
-﻿using Maya.Ext.Rop;
+﻿using Maya.Ext;
+using Maya.Ext.Rop;
 using Microsoft.AspNetCore.Components.Forms;
 using TempoWorklogger.Contract.UI.ViewModels.ImportWizard;
+using TempoWorklogger.CQRS.Template.Queries;
 using TempoWorklogger.Model.UI;
 using FileInfo = TempoWorklogger.Model.UI.FileInfo;
 
@@ -40,9 +42,9 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                     viewModel.ImportWizardState.CurrentStep = success;
                     return Task.CompletedTask;
                 },
-                faill =>
+                fail =>
                 {
-                    // TODO display error on top of step view. Component on ImportWizardView or Status Message Service
+                    viewModel.ErrorMessage = fail.Message;
                 });
 
             return Maya.Ext.Unit.Default;
@@ -90,19 +92,32 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             }
         }
 
-        private Task<stepExecutionResult> SelectImportTemplateStepAsync()
+        private async Task<stepExecutionResult> SelectImportTemplateStepAsync()
         {
             if (viewModel.ImportWizardState.File == null)
             {
-                return Task.FromResult(stepExecutionResult.Failed(new Exception("Please select valid file.")));
+                return stepExecutionResult.Failed(new Exception("Please select valid file."));
             }
 
             if (viewModel.ImportWizardState.SelectedImportMap == null)
             {
-                return Task.FromResult(stepExecutionResult.Failed(new Exception("Please select valid mapping import template.")));
+                return stepExecutionResult.Failed(new Exception("Please select valid mapping import template."));
             }
 
-            return Task.FromResult(stepExecutionResult.Succeeded(ImportWizardStepKind.Preview));
+            await viewModel.Mediator.Send(new GetImportMapsQuery())
+                .HandleAsync(
+                    success =>
+                    {
+                        viewModel.ImportMappingTemplates = success;
+                        return Task.CompletedTask;
+                    },
+                    fail =>
+                    {
+                        viewModel.ErrorMessage = fail.Message;
+                    }
+                );
+
+            return stepExecutionResult.Succeeded(ImportWizardStepKind.Preview);
         }
 
         private Task<stepExecutionResult> ConfirmPreviewDataStepAsync()
@@ -142,6 +157,39 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                 LastModified = viewModel.SelectedFile.LastModified,
                 Size = viewModel.SelectedFile.Size,
             };
+        }
+
+        public async Task<Unit> ReadFileContent()
+        {
+            try
+            {
+                await viewModel.Mediator.Send(new CQRS.Worklogs.Queries.ReadFromFileQuery(
+                    viewModel.ImportWizardState.File,
+                    viewModel.ImportWizardState.SelectedImportMap,
+                    viewModel.OnProgressChanged))
+                    .HandleAsync(
+                    success =>
+                    {
+                        viewModel.ImportWizardState.WorklogsFileResults = success;
+                        return Task.CompletedTask;
+                    },
+                    failure => {
+                        viewModel.ErrorMessage = failure.Message;
+                    });
+            }
+            catch (ObjectDisposedException e)
+            {
+                if (e.Message.Equals("Cannot access a closed Stream.", StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    //viewModel.ErrorMessage = e.Message;
+                }
+            }
+            catch (Exception e)
+            {
+                viewModel.ErrorMessage = e.Message;
+            }
+
+            return Unit.Default;
         }
     }
 }

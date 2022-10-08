@@ -1,6 +1,4 @@
-﻿using Foundation;
-
-namespace TempoWorklogger;
+﻿namespace TempoWorklogger;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

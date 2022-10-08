@@ -8,7 +8,7 @@
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-    private void OnGoBackClicked()
+    private void OnGoBackClicked(MouseEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(PrevPage))
         {

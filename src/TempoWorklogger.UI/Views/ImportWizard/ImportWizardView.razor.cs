@@ -7,7 +7,5 @@ namespace TempoWorklogger.UI.Views.ImportWizard
     {
         [CascadingParameter(Name = nameof(IImportWizardViewModel))]
         public IImportWizardViewModel ViewModel { get; set; } = null!;
-
-        string errorMessage = string.Empty;
     }
 }

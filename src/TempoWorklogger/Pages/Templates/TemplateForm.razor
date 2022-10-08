@@ -1,5 +1,5 @@
-﻿@page "/templates/create"
-@page "/templates/{name}/edit"
+﻿@page "/template/create"
+@page "/template/{templateId}/edit"
 
 <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Template.ITemplateViewModel))" Value="@vm">
     <TempoWorklogger.UI.Containers.ContentContainer IsLoading="@vm.IsInit" IsBusy="@vm.IsBusy">
@@ -14,7 +14,7 @@
             </div>
         </StaticContent>
         <Content>
-            <TempoWorklogger.UI.Views.Templates.TemplatesView />
+            <TempoWorklogger.UI.Views.Template.TemplateView />
         </Content>
     </TempoWorklogger.UI.Containers.ContentContainer>
 </CascadingValue>

@@ -26,7 +26,7 @@ namespace TempoWorklogger.CQRS.Template.Commands
 
                 var attributes = ColumnDefinitionHelper.MarkColumnsDefitionsAsAttributes(request.Attributes);
 
-                var dbConnection = await this.dbService.GetConnection()
+                var dbConnection = await this.dbService.GetConnection(cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
                 var data = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>

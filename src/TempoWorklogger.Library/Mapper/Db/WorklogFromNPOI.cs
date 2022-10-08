@@ -31,7 +31,9 @@ namespace TempoWorklogger.Library.Mapper.Db
                     var cellIndex = ExcelHelper.GetColumnIndex(item.Position);
                     worklog = worklog.MapColumnDefinitionExcelRowToWorklog(item, row.GetCell(cellIndex));
                 }
-
+                
+                FixStartEndDate(worklog);
+                
                 worklog.TimeSpentSeconds = CalculateTimeSpentSeconds(worklog.TimeSpentSeconds, worklog.StartTime, worklog.EndTime);
 
                 return Result<Worklog, (Exception, int)>.Succeeded(worklog);
@@ -42,14 +44,39 @@ namespace TempoWorklogger.Library.Mapper.Db
             }
         }
 
-        private static int CalculateTimeSpentSeconds(int actualSeconds, TimeOnly startTime, TimeOnly endTime)
+        private static int CalculateTimeSpentSeconds(int actualSeconds, DateTime startTime, DateTime endTime)
         {
-            if (actualSeconds == Zero && startTime.Ticks != endTime.Ticks)
+            if (actualSeconds == Zero && startTime.Ticks != endTime.Ticks && endTime.Year != 0 && startTime.Year != 0)
             {
                 return (int)(endTime - startTime).TotalSeconds;
             }
 
             return actualSeconds;
+        }
+
+        private static void FixStartEndDate(Worklog worklog)
+        {
+            if (worklog.EndTime.Year == 0 && worklog.StartTime.Year != 0)
+            {
+                worklog.EndTime = new DateTime(
+                    worklog.StartTime.Year,
+                    worklog.StartTime.Month,
+                    worklog.StartTime.Day,
+                    worklog.EndTime.Hour,
+                    worklog.EndTime.Minute,
+                    worklog.EndTime.Second);
+            }
+
+            if (worklog.StartTime.Year == 0 && worklog.EndTime.Year != 0)
+            {
+                worklog.StartTime = new DateTime(
+                    worklog.EndTime.Year,
+                    worklog.EndTime.Month,
+                    worklog.EndTime.Day,
+                    worklog.StartTime.Hour,
+                    worklog.StartTime.Minute,
+                    worklog.StartTime.Second);
+            }
         }
 
         /// <summary>
@@ -68,12 +95,26 @@ namespace TempoWorklogger.Library.Mapper.Db
 
             if (columnDefinition.Name == nameof(Worklog.StartTime))
             {
-                worklog.StartTime = TimeOnly.Parse(columnDefinition.Value);
+                var startTime = TimeOnly.Parse(columnDefinition.Value);
+                worklog.StartTime = new DateTime(
+                    worklog.StartTime.Year,
+                    worklog.StartTime.Month,
+                    worklog.StartTime.Day,
+                    startTime.Hour,
+                    startTime.Minute,
+                    startTime.Second);
             }
 
             if (columnDefinition.Name == nameof(Worklog.EndTime))
             {
-                worklog.EndTime = TimeOnly.Parse(columnDefinition.Value);
+                var endTime = TimeOnly.Parse(columnDefinition.Value);
+                worklog.EndTime = new DateTime(
+                    worklog.EndTime.Year,
+                    worklog.EndTime.Month,
+                    worklog.EndTime.Day,
+                    endTime.Hour,
+                    endTime.Minute,
+                    endTime.Second);
             }
 
             if (columnDefinition.Name == nameof(Worklog.TimeSpentSeconds))
@@ -83,7 +124,26 @@ namespace TempoWorklogger.Library.Mapper.Db
 
             if (columnDefinition.Name == nameof(Worklog.StartDate))
             {
-                worklog.StartDate = DateOnly.Parse(columnDefinition.Value);
+                var startDate = DateOnly.Parse(columnDefinition.Value);
+                worklog.StartTime = new DateTime(
+                    startDate.Year,
+                    startDate.Month,
+                    startDate.Day,
+                    worklog.StartTime.Hour,
+                    worklog.StartTime.Minute,
+                    worklog.StartTime.Second);
+            }
+
+            if (columnDefinition.Name == nameof(Worklog.EndDate))
+            {
+                var endDate = DateOnly.Parse(columnDefinition.Value);
+                worklog.EndTime = new DateTime(
+                    endDate.Year,
+                    endDate.Month,
+                    endDate.Day,
+                    worklog.EndTime.Hour,
+                    worklog.EndTime.Minute,
+                    worklog.EndTime.Second);
             }
 
             if (columnDefinition.Name == nameof(Worklog.Description))
@@ -122,22 +182,51 @@ namespace TempoWorklogger.Library.Mapper.Db
 
             if (columnDefinition.Name == nameof(Worklog.StartTime))
             {
-                worklog.StartTime = TimeOnly.FromDateTime(cell.DateCellValue);
+                worklog.StartTime = new DateTime(
+                    worklog.StartTime.Year,
+                    worklog.StartTime.Month,
+                    worklog.StartTime.Day,
+                    cell.DateCellValue.Hour,
+                    cell.DateCellValue.Minute,
+                    cell.DateCellValue.Second);
+            }
+
+            if (columnDefinition.Name == nameof(Worklog.StartDate))
+            {
+                worklog.StartTime = new DateTime(
+                    cell.DateCellValue.Year,
+                    cell.DateCellValue.Month,
+                    cell.DateCellValue.Day,
+                    worklog.StartTime.Hour,
+                    worklog.StartTime.Minute,
+                    worklog.StartTime.Second);
             }
 
             if (columnDefinition.Name == nameof(Worklog.EndTime))
             {
-                worklog.EndTime = TimeOnly.FromDateTime(cell.DateCellValue);
+                worklog.EndTime = new DateTime(
+                    worklog.EndTime.Year,
+                    worklog.EndTime.Month,
+                    worklog.EndTime.Day,
+                    cell.DateCellValue.Hour,
+                    cell.DateCellValue.Minute,
+                    cell.DateCellValue.Second);
+            }
+
+            if (columnDefinition.Name == nameof(Worklog.EndDate))
+            {
+                worklog.EndTime = new DateTime(
+                    cell.DateCellValue.Year,
+                    cell.DateCellValue.Month,
+                    cell.DateCellValue.Day,
+                    worklog.EndTime.Hour,
+                    worklog.EndTime.Minute,
+                    worklog.EndTime.Second);
             }
 
             if (columnDefinition.Name == nameof(Worklog.TimeSpentSeconds))
             {
                 worklog.TimeSpentSeconds = Convert.ToInt32(cell);
-            }
-
-            if (columnDefinition.Name == nameof(Worklog.StartDate))
-            {
-                worklog.StartDate = DateOnly.FromDateTime(cell.DateCellValue);
             }
 
             if (columnDefinition.Name == nameof(Worklog.Description))

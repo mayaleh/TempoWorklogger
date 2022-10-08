@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.IO;
-
-namespace TempoWorklogger.Library.Service
+﻿namespace TempoWorklogger.Library.Service
 {
     public class StorageService : IStorageService
     {

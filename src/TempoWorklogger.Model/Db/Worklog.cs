@@ -26,13 +26,17 @@ namespace TempoWorklogger.Model.Db
         [MaxLength(255)]
         public string? IssueKey { get; set; }
 
-        public DateOnly StartDate { get; set; }
+        [Ignore]
+        public DateTime StartDate { get => StartTime.Date; }
 
-        public TimeOnly StartTime { get; set; }
+        public DateTime StartTime { get; set; }
 
         public int TimeSpentSeconds { get; set; }
 
-        public TimeOnly EndTime { get; set; }
+        [Ignore]
+        public DateTime EndDate { get => EndTime.Date; }
+
+        public DateTime EndTime { get; set; }
 
         [OneToMany]
         public ICollection<CustomAttributeKeyVal> Attributes { get; set; } = new List<CustomAttributeKeyVal>();

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Reflection;
 using TempoWorklogger.Contract.Config;
+using TempoWorklogger.Contract.Services;
+using TempoWorklogger.CQRS;
 using TempoWorklogger.Dto.Config;
-using TempoWorklogger.Library;
-using TempoWorklogger.States;
+using TempoWorklogger.Service;
 
 namespace TempoWorklogger;
 
@@ -21,7 +22,7 @@ public static class MauiProgram
 
 		// Add appsettings
         using var stream = Assembly.GetExecutingAssembly()
-			.GetManifestResourceStream("tempo-worklogger.appsettings.json");
+			.GetManifestResourceStream("TempoWorklogger.tempo-worklogger.appsettings.json");
         var config = new ConfigurationBuilder().AddJsonStream(stream).Build();
         builder.Configuration.AddConfiguration(config);
         
@@ -33,14 +34,23 @@ public static class MauiProgram
 			return appConfig;
 		});
 
+        builder.Services.AddScoped<ITempoService, TempoService>();
+        builder.Services.AddScoped<IFileReaderService, FileReaderService>();
+
+        builder.Services.AddSingleton<IDbService>(options => {
+			var appConfig = options.GetService<IAppConfig>();
+			var dbService = new DbService(appConfig.DatabaseFileName);
+			var dbContext = dbService.GetConnection(default, updateSchema: true).Result;
+
+			return dbService;
+        });
+
+        builder.Services.AddCQRS();
+
         builder.Services.AddMauiBlazorWebView();
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
-		builder.Services.AddSingleton<ImportState>();
-
-		builder.Services.AddTempoWorkloggerLibrary();
-
         return builder.Build();
 	}
 }

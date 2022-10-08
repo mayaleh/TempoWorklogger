@@ -1,19 +1,10 @@
-﻿using Maya.Ext.Rop;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TempoWorklogger.Library.Model.Tempo;
-using TempoWorklogger.Library.Service;
-using TempoWorklogger.States;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace TempoWorklogger.Pages.Import
 {
-    public partial class ExecutingProgressStep
+    public partial class ExecutingProgressStep : ComponentBase
     {
-        [Inject]
+        /*[Inject]
         public ImportState ImportState { get; set; }
 
         public ITempoService TempoService { get; set; }
@@ -30,35 +21,35 @@ namespace TempoWorklogger.Pages.Import
         private void OnStopImportClicked()
         {
             this.isExecuting = false;
-        }
+        }*/
 
-        private async Task OnContinueImportClicked()
+        /*private async Task OnContinueImportClicked()
         {
             this.isExecuting = true;
             await ExecuteImport();
-        }
+        }*/
 
         private void OnReadProgressChanged(int percemtageDone)
         {
-            this.processedProgress = percemtageDone;
+            //this.processedProgress = percemtageDone;
             StateHasChanged();
         }
 
         protected override void OnInitialized()
         {
-            TempoService = new TempoService(ImportState.ImportMap.AccessToken);
-            base.OnInitialized();
+            /*TempoService = new TempoService(ImportState.ImportMap.AccessToken);
+            base.OnInitialized();*/
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await ExecuteImport();
+                //await ExecuteImport();
             }
         }
 
-        private async Task ExecuteImport()
+        /*private async Task ExecuteImport()
         {
             // something like:
             // - allow stop and continue,
@@ -114,6 +105,6 @@ namespace TempoWorklogger.Pages.Import
             this.isExecuting = false;
             this.isDone = true;
             StateHasChanged();
-        }
+        }*/
     }
 }

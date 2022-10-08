@@ -39,5 +39,19 @@ namespace TempoWorklogger.ViewModels.Template
         public ICommandAsync<Model.Db.ColumnDefinition> RemoveAttributeCommand { get; private set; }
 
         private void LoadCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
+        
+        private void SaveCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
+
+        public void Dispose()
+        {
+            if (this.LoadCommand != null)
+            {
+                this.LoadCommand.OnExecuteChanged -= LoadCommand_OnExecuteChanged;
+            }
+            if (this.SaveCommand != null)
+            {
+                this.SaveCommand.OnExecuteChanged -= SaveCommand_OnExecuteChanged;
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace TempoWorklogger.Contract.UI.ViewModels.Template
     /// <summary>
     /// Provides commands available for edit/add form of the ImportMap model also known as Import Template
     /// </summary>
-    public interface ITemplateCommands
+    public interface ITemplateCommands : IDisposable
     {
         /// <summary>
         /// Loads the ImportMap by its ID, if null ID given, initialize default as new
