@@ -5,6 +5,7 @@ using TempoWorklogger.Contract.Services;
 using TempoWorklogger.CQRS;
 using TempoWorklogger.Dto.Config;
 using TempoWorklogger.Service;
+using TempoWorklogger.UI;
 
 namespace TempoWorklogger;
 
@@ -46,6 +47,8 @@ public static class MauiProgram
         });
 
         builder.Services.AddCQRS();
+
+		builder.Services.AddUIServices();
 
         builder.Services.AddMauiBlazorWebView();
 #if DEBUG

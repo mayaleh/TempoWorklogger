@@ -29,6 +29,7 @@ namespace TempoWorklogger.Service
             return conn;
         }
 
+        // TODO: provide ROP
         /// <inheritdoc/>
         public Task<T> AttemptAndRetry<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken, int numRetries = 10)
         {

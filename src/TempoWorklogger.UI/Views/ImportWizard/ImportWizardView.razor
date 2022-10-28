@@ -9,7 +9,7 @@
         @*<CancalWizard />*@
     </div>
     <div class="col-auto">
-        @*<GoBack PrevPage="/import/select-file" />*@
+        <button class="btn btn-outline-secondary" disabled="@(!ViewModel.Commands.PreviousStepCommand.CanExecute)" @onclick="@ViewModel.Commands.PreviousStepCommand.Execute"><i class="fa fa-arrow-left"></i> Back</button>
     </div>
 </div>
 

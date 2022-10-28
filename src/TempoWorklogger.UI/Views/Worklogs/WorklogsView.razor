@@ -1,0 +1,64 @@
+﻿
+<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteItemModalLabel">Confirm deleting item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you realy want to delete the worklog? This operation is permanent and will be deleted only on your local machine...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" data-bs-dismiss="modal" @onclick="@(() => ViewModel.DeleteCommand.Execute())" class="btn btn-primary">Yes, I know what I am doing!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="@(() => ViewModel.CreateCommand.Execute())">Create</button>
+    </div>
+</div>
+
+@*TODO: actions: Create, Batch actions like send to somewhere (Tempo primary and other integrations..)*@
+
+<div class="row mb-2">
+    <div class="col-12">
+        @*TODO inline editing https://blazor.radzen.com/docs/guides/components/datagrid.html#in-line-editing*@
+
+        <RadzenDataGrid Data="@ViewModel.Worklogs"
+                        TItem="Model.Db.Worklog"
+                        AllowSorting="true"
+                        AllowMultiColumnSorting="true"
+                        AllowPaging="true"
+                        PageSize="25"
+                        AllowFiltering="true">
+            <Columns>
+                @*TODO: checkbox to select collection and do some batch action*@
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Title="ID" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Title="Issue" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Title="Started" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Title="Ended" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <RadzenButton Shade="Shade.Lighter" Click=@(args => ViewModel.EditCommand.Execute(data.Id)) Icon="edit" Text="Edit" ButtonStyle="ButtonStyle.Primary" />
+                            <span> | </span>
+                        <RadzenButton 
+                            Shade="Shade.Lighter"
+                            Click=@(args => ViewModel.PrepareDeleteCommand.Execute(data))
+                            Icon="delete_forever"
+                            Text="Delete"
+                            ButtonStyle="ButtonStyle.Danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteItemModal" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>

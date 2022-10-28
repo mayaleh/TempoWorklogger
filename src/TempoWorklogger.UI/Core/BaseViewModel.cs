@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TempoWorklogger.Contract.UI;
+using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels;
 
 namespace TempoWorklogger.UI.Core
@@ -9,6 +10,8 @@ namespace TempoWorklogger.UI.Core
         bool isInit, isBusy;
 
         public IMediator Mediator { get; }
+
+        public IUINotificationService NotificationService { get; }
 
         public Action OnUiChanged { get; }
 
@@ -38,9 +41,10 @@ namespace TempoWorklogger.UI.Core
             }
         }
 
-        public BaseViewModel(IMediator mediator, Action onUiChanged)
+        public BaseViewModel(IMediator mediator, IUINotificationService notificationService, Action onUiChanged)
         {
             Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            NotificationService = notificationService;
             this.OnUiChanged = onUiChanged ?? throw new ArgumentNullException(nameof(onUiChanged));
 
             this.OnIsInit = (v) => { this.OnUiChanged.Invoke(); };

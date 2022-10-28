@@ -1,11 +1,11 @@
 ﻿@page "/"
+@using TempoWorklogger.Contract.UI.Core
+@inject IUINotificationService notificationService;
 
-@*TODO: Add Worklogs first*@
-
-<div class="row mb-3">
+<div class="row mb-2">
     <div class="col-12 text-center">
-        <NavLink class="btn btn-outline-primary btn-lg p-4" style="width:250px" role="button" href="/imports/worklogs">
-            <i class="fa fa-cloud-upload"></i><br />Import worklogs
+        <NavLink class="btn btn-outline-primary btn-lg p-4" style="width:250px" role="button" href="/worklogs">
+            <i class="fa fa-table"></i><br />Worklogs
         </NavLink>
     </div>
 </div>
@@ -14,6 +14,15 @@
     <div class="col-12 text-center">
         <NavLink class="btn btn-outline-primary btn-lg p-4" style="width:250px" role="button" href="/templates">
             <i class="fa fa-magic"></i><br />Mapping Templates
+        </NavLink>
+    </div>
+</div>
+
+
+<div class="row mb-3">
+    <div class="col-12 text-center">
+        <NavLink class="btn btn-outline-primary btn-lg p-4" style="width:250px" role="button" href="/imports/worklogs">
+            <i class="fa fa-cloud-upload"></i><br />Import worklogs
         </NavLink>
     </div>
 </div>
@@ -28,3 +37,21 @@
         </NavLink>
     </div>
 </div>*@
+
+<div class="row">
+    <div class="col-12 text-center">
+        <button class="btn btn-outline-succes" @onclick="@(async () => await ShowSucces())">Show Success</button>
+        <button class="btn btn-outline-error" @onclick="@(async () => await ShowError())">Show Error</button>
+    </div>
+</div>
+
+@code {
+    async Task ShowSucces()
+    {
+        await notificationService.ShowSuccess("Hello, this is success");
+    }
+    async Task ShowError()
+    {
+        await notificationService.ShowError("Hello, this is error.. >_<");
+    }
+}

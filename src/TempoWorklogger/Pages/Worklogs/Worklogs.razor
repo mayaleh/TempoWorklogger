@@ -1,0 +1,19 @@
+﻿@page "/worklogs"
+
+<CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Worklogs.IWorklogsViewModel))" Value="@vm">
+    <TempoWorklogger.UI.Containers.ContentContainer IsLoading="@vm.IsInit" IsBusy="@vm.IsBusy">
+        <StaticContent>
+            <div class="row">
+                <div class="col">
+                    <h3 class="mb-2">Worklogs</h3>
+                </div>
+                <div class="col-auto">
+                    <GoBack />
+                </div>
+            </div>
+        </StaticContent>
+        <Content>
+            <TempoWorklogger.UI.Views.Worklogs.WorklogsView />
+        </Content>
+    </TempoWorklogger.UI.Containers.ContentContainer>
+</CascadingValue>

@@ -12,7 +12,7 @@ namespace TempoWorklogger.Contract.UI.ViewModels.Templates
 
         ICommandAsync DeleteCommand { get; }
 
-        ICommand<string> EditCommand { get; }
+        ICommand<int> EditCommand { get; }
 
         ICommand CreateCommand { get; }
     }

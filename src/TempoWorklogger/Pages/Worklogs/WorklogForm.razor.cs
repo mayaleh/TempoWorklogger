@@ -1,33 +1,36 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using TempoWorklogger.Contract.UI.Core;
-using TempoWorklogger.Contract.UI.ViewModels.Templates;
-using TempoWorklogger.ViewModels.Templates;
+using TempoWorklogger.Contract.UI.ViewModels.Worklog;
+using TempoWorklogger.ViewModels.Worklog;
 
-namespace TempoWorklogger.Pages.Templates
+namespace TempoWorklogger.Pages.Worklogs
 {
-    public partial class Templates : IDisposable
+    public partial class WorklogForm
     {
+        [Parameter]
+        public long? WorklogId { get; set; }
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-        
-        [Inject] 
+
+        [Inject]
         public IMediator Mediator { get; set; }
 
         [Inject]
         public IUINotificationService UINotificationService { get; set; }
 
-        private ITemplatesViewModel vm;
+        private IWorklogViewModel vm;
 
         protected override async Task OnInitializedAsync()
         {
-            this.vm = new TemplatesViewModel(
+            this.vm = new WorklogViewModel(
                 this.Mediator,
                 UINotificationService,
                 NavigationManager,
                 () => StateHasChanged());
 
-            await this.vm.LoadCommand.Execute();
+            await this.vm.Commands.LoadCommand.Execute(WorklogId);
         }
 
         public void Dispose()

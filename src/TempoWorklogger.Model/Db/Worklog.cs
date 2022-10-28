@@ -31,7 +31,7 @@ namespace TempoWorklogger.Model.Db
 
         public DateTime StartTime { get; set; }
 
-        public int TimeSpentSeconds { get; set; }
+        public int TimeSpentSeconds { get; set; } // is it required?
 
         [Ignore]
         public DateTime EndDate { get => EndTime.Date; }

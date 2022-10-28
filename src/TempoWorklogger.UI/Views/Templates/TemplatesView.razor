@@ -30,7 +30,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Yes, I know what i am doing!</button>
+                <button type="button" data-bs-dismiss="modal" @onclick="@(() => ViewModel.DeleteCommand.Execute())" class="btn btn-primary">Yes, I know what I am doing!</button>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                         <td>@(string.IsNullOrWhiteSpace(item.AccessToken) ? item.AccessToken.First() + "******" + item.AccessToken.Last() : "empty")</td>
                         <td>@item.ColumnDefinitions.Count() x cols</td>
                         <td>
-                            <button class="btn btn-outline-primary" @onclick="@(() => ViewModel.EditCommand.Execute(item.Name))">Edit</button>
+                            <button class="btn btn-outline-primary" @onclick="@(() => ViewModel.EditCommand.Execute(item.Id))">Edit</button>
                             <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteItemModal" @onclick="(_ => ViewModel.PrepareDeleteCommand.Execute(item))">Delete</button>
                         </td>
                     </tr>

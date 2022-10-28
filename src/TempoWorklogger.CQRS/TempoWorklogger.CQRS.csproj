@@ -19,7 +19,4 @@
 	  <ProjectReference Include="..\TempoWorklogger.Library\TempoWorklogger.Library.csproj" />
 	  <ProjectReference Include="..\TempoWorklogger.Model\TempoWorklogger.Model.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Worklogs\Commands\" />
-	</ItemGroup>
 </Project>

@@ -56,7 +56,9 @@ namespace TempoWorklogger.ViewModels.ImportWizard
 
             if (Enum.IsDefined(typeof(ImportWizardStepKind), currenctStepNr) == false)
             {
-                throw new ApplicationException("There is no previous step...");
+                viewModel.GoBackToBase();
+                return Task.FromResult(Maya.Ext.Unit.Default);
+                //throw new ApplicationException("There is no previous step...");
             }
 
             viewModel.ImportWizardState.CurrentStep = (ImportWizardStepKind)currenctStepNr;
@@ -84,12 +86,30 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                     return stepExecutionResult.Failed(new Exception("Please select valid file."));
                 }
 
+                await LoadImportTemplates();
+
                 return stepExecutionResult.Succeeded(ImportWizardStepKind.Template);
             }
             catch (Exception e)
             {
                 return stepExecutionResult.Failed(e);
             }
+        }
+
+        private async Task LoadImportTemplates()
+        {
+            await viewModel.Mediator.Send(new GetImportMapsQuery())
+                .HandleAsync(
+                    success =>
+                    {
+                        viewModel.ImportMappingTemplates = success;
+                        return Task.CompletedTask;
+                    },
+                    fail =>
+                    {
+                        viewModel.ErrorMessage = fail.Message;
+                    }
+                );
         }
 
         private async Task<stepExecutionResult> SelectImportTemplateStepAsync()
@@ -104,18 +124,7 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                 return stepExecutionResult.Failed(new Exception("Please select valid mapping import template."));
             }
 
-            await viewModel.Mediator.Send(new GetImportMapsQuery())
-                .HandleAsync(
-                    success =>
-                    {
-                        viewModel.ImportMappingTemplates = success;
-                        return Task.CompletedTask;
-                    },
-                    fail =>
-                    {
-                        viewModel.ErrorMessage = fail.Message;
-                    }
-                );
+            // TODO: read the file
 
             return stepExecutionResult.Succeeded(ImportWizardStepKind.Preview);
         }
@@ -181,8 +190,10 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             {
                 if (e.Message.Equals("Cannot access a closed Stream.", StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    //viewModel.ErrorMessage = e.Message;
+                    return Unit.Default;
                 }
+
+                viewModel.ErrorMessage = e.Message;
             }
             catch (Exception e)
             {

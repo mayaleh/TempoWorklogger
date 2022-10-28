@@ -4,7 +4,6 @@ namespace TempoWorklogger.Contract.UI.ViewModels.Template
 {
     public interface ITemplateViewModel : IBaseViewModel, IDisposable
     {
-
         ITemplateCommands Commands { get; }
 
         ITemplateActions Actions { get; }

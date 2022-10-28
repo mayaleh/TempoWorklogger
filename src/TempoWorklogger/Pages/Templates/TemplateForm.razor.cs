@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
+using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Template;
 using TempoWorklogger.ViewModels.Template;
 
@@ -16,12 +17,16 @@ namespace TempoWorklogger.Pages.Templates
         [Inject]
         public IMediator Mediator { get; set; }
 
+        [Inject]
+        public IUINotificationService UINotificationService { get; set; }
+
         private ITemplateViewModel vm;
 
         protected override async Task OnInitializedAsync()
         {
             this.vm = new TemplateViewModel(
                 this.Mediator,
+                UINotificationService,
                 NavigationManager,
                 () => StateHasChanged());
 

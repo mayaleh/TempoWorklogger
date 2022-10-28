@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Web;
 using TempoWorklogger.Contract.UI;
+using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Templates;
 using TempoWorklogger.CQRS.Template.Queries;
 using TempoWorklogger.Model.Db;
@@ -16,12 +17,16 @@ namespace TempoWorklogger.ViewModels.Templates
 
         private ImportMap toBeDeleted = new();
 
-        public TemplatesViewModel(IMediator mediator, NavigationManager navigationManager, Action onUiChanged) : base(mediator, onUiChanged)
+        public TemplatesViewModel(
+            IMediator mediator,
+            IUINotificationService notificationService,
+            NavigationManager navigationManager,
+            Action onUiChanged) : base(mediator, notificationService, onUiChanged)
         {
             // TODO commands and actions
             LoadCommand = new CommandAsync(Load);
             CreateCommand = new Command(Create);
-            EditCommand = new TempoWorklogger.UI.Core.Command<string>(Edit);
+            EditCommand = new TempoWorklogger.UI.Core.Command<int>(Edit);
             PrepareDeleteCommand = new TempoWorklogger.UI.Core.Command<ImportMap>(DeletePrepare);
 
             LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
@@ -34,7 +39,7 @@ namespace TempoWorklogger.ViewModels.Templates
 
         public ICommandAsync LoadCommand { get; }
 
-        public ICommand<string> EditCommand { get; }
+        public ICommand<int> EditCommand { get; }
 
         public ICommand CreateCommand { get; }
 
@@ -70,7 +75,7 @@ namespace TempoWorklogger.ViewModels.Templates
             if (result.IsFailure)
             {
                 Console.WriteLine(result.Failure.Message);
-                //this.notifyMessage?.Error(result.ErrMessage);
+                NotificationService.ShowError($"Failled to load import templates. Message: {result.Failure.Message}");
             }
 
             Templates = result.Success?.ToList() ?? new List<ImportMap>();
@@ -82,7 +87,6 @@ namespace TempoWorklogger.ViewModels.Templates
         private void Create()
         {
             this.navigationManager.NavigateTo("/template/create");
-            //return Maya.Ext.Unit.Default;
         }
 
         private Maya.Ext.Unit DeletePrepare(ImportMap importMap)
@@ -93,13 +97,13 @@ namespace TempoWorklogger.ViewModels.Templates
 
         private async Task DeleteExecutingConfirmed()
         {
-            // TBD
+            throw new NotImplementedException();
         }
 
-        private Maya.Ext.Unit Edit(string name)
+        private Maya.Ext.Unit Edit(int id)
         {
-            var friendlyName = HttpUtility.UrlEncodeUnicode(name);
-            this.navigationManager.NavigateTo($"/templates/{friendlyName}/edit");
+            //var friendlyName = HttpUtility.UrlEncodeUnicode(name);
+            this.navigationManager.NavigateTo($"/template/{id}/edit");
             return Maya.Ext.Unit.Default;
         }
     }

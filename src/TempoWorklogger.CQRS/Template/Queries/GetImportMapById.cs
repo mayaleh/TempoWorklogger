@@ -23,11 +23,18 @@
                     return dbConnection.Table<ImportMap>()
                         .FirstOrDefaultAsync(i => i.Id == request.Id);
                 }, cancellationToken).ConfigureAwait(false);
-                
+
                 if (data == null)
                 {
                     return importMapResult.Failed(new Exception($"The template with id {request.Id} not found..."));
                 }
+
+                data.ColumnDefinitions = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
+                {
+                    return dbConnection.Table<ColumnDefinition>()
+                    .Where(i => i.ImportMapId == data.Id)
+                        .ToListAsync();
+                }, cancellationToken).ConfigureAwait(false);
 
                 return importMapResult.Succeeded(data);
             }

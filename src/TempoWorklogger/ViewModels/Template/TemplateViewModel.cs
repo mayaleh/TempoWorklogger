@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
+using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Template;
 using TempoWorklogger.Model.Db;
 using TempoWorklogger.UI.Core;
@@ -11,7 +12,11 @@ namespace TempoWorklogger.ViewModels.Template
     {
         private readonly NavigationManager navigationManager;
 
-        public TemplateViewModel(IMediator mediator, NavigationManager navigationManager, Action onUiChanged) : base(mediator, onUiChanged)
+        public TemplateViewModel(
+            IMediator mediator,
+            IUINotificationService notificationService,
+            NavigationManager navigationManager,
+            Action onUiChanged) : base(mediator, notificationService, onUiChanged)
         {
             this.navigationManager = navigationManager;
             Actions = new TemplateActions(this);

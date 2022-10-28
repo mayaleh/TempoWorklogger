@@ -1,7 +1,11 @@
-﻿namespace TempoWorklogger.Contract.UI.ViewModels
+﻿using TempoWorklogger.Contract.UI.Core;
+
+namespace TempoWorklogger.Contract.UI.ViewModels
 {
     public interface IBaseViewModel
     {
+        IUINotificationService NotificationService { get; }
+
         bool IsInit { get; set; }
         bool IsBusy { get; set; }
 

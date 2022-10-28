@@ -1,54 +1,46 @@
 ﻿using Maya.Ext;
 using Maya.Ext.Func.Rop;
-using System.Collections;
-using TempoWorklogger.Contract.UI.ViewModels.Template;
+using TempoWorklogger.Contract.UI.ViewModels.Worklog;
+using TempoWorklogger.Model.Db;
 
-namespace TempoWorklogger.ViewModels.Template
+namespace TempoWorklogger.ViewModels.Worklog
 {
-    using ColumnDefinition = Model.Db.ColumnDefinition;
     using unitResult = Maya.Ext.Rop.Result<Unit, Exception>;
-    internal class TemplateActions : ITemplateActions
-    {
-        private readonly TemplateViewModel viewModel;
 
+    public class WorklogActions : IWorklogActions
+    {
+        private readonly WorklogViewModel viewModel;
         private bool isEditing = false;
 
-        public TemplateActions(TemplateViewModel viewModel)
+        public WorklogActions(WorklogViewModel viewModel)
         {
             this.viewModel = viewModel;
         }
 
-        public Task<Unit> AddAttribute()
+        public Task<Unit> AddAttribute(CustomAttributeKeyVal customAttributeKeyVal)
         {
-            viewModel.AttributesModel.Add(new Model.Db.ColumnDefinition());
+            viewModel.WorklogModel.Attributes.Add(customAttributeKeyVal);
             return Task.FromResult(Unit.Default);
         }
 
-        public async Task<Unit> Load(int? id = null)
+        public async Task<Unit> Load(long? id)
         {
-            viewModel.ImportMapModel = new();
-            viewModel.AttributesModel = new();
-
             if (id == null)
             {
-                foreach (var property in typeof(Model.Db.Worklog).GetProperties())
+                viewModel.WorklogModel = new Model.Db.Worklog()
                 {
-                    if (property.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
-                    {
-                        continue;
-                    }
-
-                    viewModel.ImportMapModel.ColumnDefinitions.Add(new ColumnDefinition { Name = property.Name });
-                }
+                    StartTime = DateTime.Now.AddMinutes(0),
+                    EndTime = DateTime.Now.AddMinutes(15)
+                };
                 return Unit.Default;
             }
 
-            return await viewModel.Mediator.Send(new CQRS.Template.Queries.GetImportMapByIdQuery(id.Value))
+            return await viewModel.Mediator.Send(new CQRS.Worklogs.Queries.GetWorklogByIdQuery(id.Value))
                 .EitherAsync(
                     success =>
                     {
                         this.isEditing = true;
-                        viewModel.ImportMapModel = success;
+                        viewModel.WorklogModel = success;
                         return Task.FromResult(unitResult.Succeeded(Unit.Default));
                     },
                     async failure =>
@@ -60,9 +52,9 @@ namespace TempoWorklogger.ViewModels.Template
                 ).ValueOrAsync(Unit.Default);
         }
 
-        public Task<Unit> RemoveAttribute(Model.Db.ColumnDefinition columnDefinition)
+        public Task<Unit> RemoveAttribute(CustomAttributeKeyVal attributeKeyVal)
         {
-            viewModel.AttributesModel.Remove(columnDefinition);
+            viewModel.WorklogModel.Attributes.Remove(attributeKeyVal);
             return Task.FromResult(Unit.Default);
         }
 
@@ -73,6 +65,7 @@ namespace TempoWorklogger.ViewModels.Template
                     async success =>
                     {
                         await viewModel.NotificationService.ShowSuccess($"Successfully saved the changes.");
+                        if(this.isEditing == false) viewModel.GoToEditWorklog(viewModel.WorklogModel.Id);
                         return unitResult.Succeeded(Unit.Default);
                     },
                     async failure =>
@@ -87,8 +80,8 @@ namespace TempoWorklogger.ViewModels.Template
         private async Task<unitResult> ExecuteSaveRequest()
         {
             return await (this.isEditing
-                ? viewModel.Mediator.Send(new CQRS.Template.Commands.UpdateImportMapCommand(viewModel.ImportMapModel, viewModel.AttributesModel))
-                : viewModel.Mediator.Send(new CQRS.Template.Commands.CreateImportMapCommand(viewModel.ImportMapModel, viewModel.AttributesModel)));
+                ? viewModel.Mediator.Send(new CQRS.Worklogs.Commands.UpdateWorklogCommand(viewModel.WorklogModel))
+                : viewModel.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand(viewModel.WorklogModel)));
         }
     }
 }
