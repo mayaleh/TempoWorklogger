@@ -50,7 +50,6 @@
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Start from row</th>
-                    <th scope="col">Access token</th>
                     <th scope="col">Column Definitions</th>
                     <th>#</th>
                 </tr>
@@ -61,7 +60,6 @@
                     <tr>
                         <th scope="row">@item.Name</th>
                         <td>@item.StartFromRow</td>
-                        <td>@(string.IsNullOrWhiteSpace(item.AccessToken) ? item.AccessToken.First() + "******" + item.AccessToken.Last() : "empty")</td>
                         <td>@item.ColumnDefinitions.Count() x cols</td>
                         <td>
                             <button class="btn btn-outline-primary" @onclick="@(() => ViewModel.EditCommand.Execute(item.Id))">Edit</button>

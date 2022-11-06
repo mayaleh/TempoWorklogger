@@ -12,6 +12,10 @@
 
         ICommand<long> EditCommand { get; }
 
-        ICommand CreateCommand { get; }
+        ICommand CreateDetailedCommand { get; }
+
+        ICommandAsync<Model.Db.Worklog> CreateInlineCommand { get; }
+
+        ICommandAsync<Model.Db.Worklog> UpdateInlineCommand { get; }
     }
 }

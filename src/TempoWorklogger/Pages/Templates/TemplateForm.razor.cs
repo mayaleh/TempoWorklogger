@@ -36,7 +36,7 @@ namespace TempoWorklogger.Pages.Templates
 
         public void Dispose()
         {
-            this.vm.Dispose();
+            this.vm?.Dispose();
         }
 
         /*

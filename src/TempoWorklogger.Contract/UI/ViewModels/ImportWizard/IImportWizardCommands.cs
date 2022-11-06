@@ -2,6 +2,8 @@
 {
     public interface IImportWizardCommands : IDisposable
     {
+        ICommandAsync ExecuteImportCommand { get; }
+
         ICommandAsync NextStepCommand { get; }
 
         ICommandAsync PreviousStepCommand { get; }

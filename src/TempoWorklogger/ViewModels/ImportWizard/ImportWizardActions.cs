@@ -29,11 +29,11 @@ namespace TempoWorklogger.ViewModels.ImportWizard
         {
             var stepExecutingAction = viewModel.ImportWizardState.CurrentStep switch
             {
-                ImportWizardStepKind.File => SelectFileSetpAsync(),
+                ImportWizardStepKind.File => SelectFileStepAsync(),
                 ImportWizardStepKind.Template => SelectImportTemplateStepAsync(),
                 ImportWizardStepKind.Preview => ConfirmPreviewDataStepAsync(),
-                ImportWizardStepKind.Process => ProcessImportStepAsync(),
-                _ => throw new ApplicationException("There is no next step...")
+                ImportWizardStepKind.Process => NoNextStepAvailable(),
+                _ => NoNextStepAvailable()
             }; ;
 
             await stepExecutingAction.HandleAsync(
@@ -44,6 +44,7 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                 },
                 fail =>
                 {
+                    viewModel.NotificationService.ShowError(fail.Message);
                     viewModel.ErrorMessage = fail.Message;
                 });
 
@@ -66,7 +67,37 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             return Task.FromResult(Maya.Ext.Unit.Default);
         }
 
-        private async Task<stepExecutionResult> SelectFileSetpAsync()
+        public async Task<Maya.Ext.Unit> ExecuteImportToDb()
+        {
+            if (viewModel.ImportWizardState.ReadFileTimestamp == null)
+            {
+                await viewModel.NotificationService.ShowError("Could not find the file content, please go back to the selecting file step, and try to select the file again.");
+                return Maya.Ext.Unit.Default;
+            }
+
+            viewModel.OnProgressChanged.Invoke(0);// reset;
+            var worklogs = viewModel.ImportWizardState.WorklogsFileResults.Where(x => x.IsSuccess)
+                .Select(x => x.Success)
+                .ToList();
+            
+            var itemNr = 0;
+
+            foreach (var worklog in worklogs)
+            {
+                var importResult = await viewModel.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand(worklog, Model.Db.WorklogLogType.ImportFromFile, viewModel.ImportWizardState.ReadFileTimestamp))
+                    .MapAsync(_ => Task.FromResult(worklog));
+
+                viewModel.ImportWizardState.WorklogsDbResults.Add(importResult);
+
+                itemNr++;
+                viewModel.OnProgressChanged.Invoke(itemNr * 100 / worklogs.Count);
+            }
+
+            await viewModel.NotificationService.ShowSuccess("Import completed. See the results in the grids.");
+            return Maya.Ext.Unit.Default;
+        }
+
+        private async Task<stepExecutionResult> SelectFileStepAsync()
         {
             try
             {
@@ -107,26 +138,36 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                     },
                     fail =>
                     {
+                        viewModel.NotificationService.ShowError(fail.Message);
                         viewModel.ErrorMessage = fail.Message;
                     }
                 );
         }
 
-        private async Task<stepExecutionResult> SelectImportTemplateStepAsync()
+        private Task<stepExecutionResult> SelectImportTemplateStepAsync()
         {
             if (viewModel.ImportWizardState.File == null)
             {
-                return stepExecutionResult.Failed(new Exception("Please select valid file."));
+                return Task.FromResult(stepExecutionResult.Failed(new Exception("Please select valid file.")));
             }
 
             if (viewModel.ImportWizardState.SelectedImportMap == null)
             {
-                return stepExecutionResult.Failed(new Exception("Please select valid mapping import template."));
+                return Task.FromResult(stepExecutionResult.Failed(new Exception("Please select valid mapping import template.")));
             }
 
-            // TODO: read the file
-
-            return stepExecutionResult.Succeeded(ImportWizardStepKind.Preview);
+            return Task.FromResult(stepExecutionResult.Succeeded(ImportWizardStepKind.Preview));
+                /*await viewModel.Mediator.Send(new CQRS.Worklogs.Queries.ReadFromFileQuery(
+                viewModel.ImportWizardState.File,
+                viewModel.ImportWizardState.SelectedImportMap,
+                viewModel.OnProgressChanged))
+                .MapAsync(success =>
+                    {
+                        viewModel.ImportWizardState.WorklogsFileResults = success;
+                        viewModel.ImportWizardState.ReadFileTimestamp = new DateTime();
+                        return Task.FromResult(ImportWizardStepKind.Preview);
+                    }
+                );*/
         }
 
         private Task<stepExecutionResult> ConfirmPreviewDataStepAsync()
@@ -139,10 +180,11 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             return Task.FromResult(stepExecutionResult.Failed(new Exception("There is not any worklogs that could be imported from the file...")));
         }
 
-        private async Task<stepExecutionResult> ProcessImportStepAsync()
+        private Task<stepExecutionResult> NoNextStepAvailable()
         {
-            throw new NotImplementedException();
-            // return stepExecutionResult.Success(ImportWizardStepKind.Process) and the result
+            return Task.FromResult(
+                stepExecutionResult.Failed(new ApplicationException("There is no next step..."))
+            );
         }
 
         public void SelectedFileChanged(IBrowserFile selectedFile)
@@ -182,7 +224,8 @@ namespace TempoWorklogger.ViewModels.ImportWizard
                         viewModel.ImportWizardState.WorklogsFileResults = success;
                         return Task.CompletedTask;
                     },
-                    failure => {
+                    failure =>
+                    {
                         viewModel.ErrorMessage = failure.Message;
                     });
             }

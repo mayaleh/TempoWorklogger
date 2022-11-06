@@ -2,7 +2,7 @@
 
 namespace TempoWorklogger.CQRS.Template.Commands
 {
-    public record UpdateImportMapCommand(ImportMap ImportMap, ICollection<ColumnDefinition> Attributes) : IRequest<unitResult>;
+    public record UpdateImportMapCommand(ImportMap ImportMap, ICollection<Model.Db.ColumnDefinition> Attributes) : IRequest<unitResult>;
 
     public class UpdateImportMapHandler : IRequestHandler<UpdateImportMapCommand, unitResult>
     {

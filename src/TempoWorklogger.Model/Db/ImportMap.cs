@@ -20,15 +20,9 @@ namespace TempoWorklogger.Model.Db
         public int StartFromRow { get; set; }
 
         /// <summary>
-        /// Access token of the Tempo importer account
-        /// </summary>
-        [MaxLength(255)]
-        public string AccessToken { get; set; } = null!;
-
-        /// <summary>
         /// Import for file type (csv or xlsx)
         /// </summary>
-        public FileTypeKinds FileType { get; set; }
+        public FileTypeKinds FileType { get; set; } = FileTypeKinds.Xlsx;
 
         /// <summary>
         /// Columns map definitions

@@ -7,6 +7,8 @@ namespace TempoWorklogger.Model.UI
     {
         public ImportWizardStepKind CurrentStep { get; set; } = ImportWizardStepKind.File;
 
+        public DateTime? ReadFileTimestamp { get; set; }
+
         public FileInfo File { get; set; } = null!;
 
         public ImportMap SelectedImportMap { get; set; } = null!;

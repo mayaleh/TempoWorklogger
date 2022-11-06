@@ -1,21 +1,27 @@
 ﻿@using TempoWorklogger.Model.Db
 
-<CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
-    @if (ViewModel.Commands.ReadFileContentCommand.Executing)
-    {
+@if (ViewModel.IsBusy)
+{
+    <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
         <TempoWorklogger.UI.Commons.ProgressBar ProcessMessage="Transforming data from the file..." />
-        return;
-    }
-</CascadingValue>
+    </CascadingValue>
+    return;
+}
 
+@if (ViewModel.ImportWizardState.WorklogsFileResults == null)
+{
+
+    <p>No data loaded...</p>
+    return;
+}
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="tableview-tab" data-bs-toggle="tab" data-bs-target="#tableview" type="button" role="tab" aria-controls="tableview" aria-selected="true">Table view</button>
     </li>
-    <li class="nav-item" role="presentation">
+    @*<li class="nav-item" role="presentation">
         <button class="nav-link" id="jsonview-tab" data-bs-toggle="tab" data-bs-target="#jsonview" type="button" role="tab" aria-controls="jsonview" aria-selected="false">JSON view</button>
-    </li>
+    </li>*@
 </ul>
 
 <div class="tab-content overflow-auto" style="max-width: 100%" id="myTabContent">
@@ -28,9 +34,8 @@
                             <td scope="col">@(nameof(Worklog.IssueKey))</td>
                             <td scope="col">@(nameof(Worklog.Description))</td>
                             <td scope="col">@(nameof(Worklog.StartTime))</td>
+                            <td scope="col">@(nameof(Worklog.EndTime))</td>
                             <td scope="col">@(nameof(Worklog.TimeSpentSeconds))</td>
-                            @*<td scope="col">@(nameof(Worklog.StartDate))</td>*@
-                            <td scope="col">@(nameof(Worklog.AuthorAccountId))</td>
                             <td scope="col">@(nameof(Worklog.Attributes))</td>
                         </tr>
                     </thead>
@@ -49,9 +54,8 @@
                                 <td>@(worklogResult.Success.IssueKey)</td>
                                 <td>@(worklogResult.Success.Description)</td>
                                 <td>@(worklogResult.Success.StartTime)</td>
+                                <td>@(worklogResult.Success.EndTime)</td>
                                 <td>@(worklogResult.Success.TimeSpentSeconds)</td>
-                                @*<td>@(worklogResult.Success.StartDate)</td>*@
-                                <td>@(worklogResult.Success.AuthorAccountId)</td>
 
                                 <td>
                                     @if (worklogResult.Success.Attributes != null && worklogResult.Success.Attributes.Any())
@@ -69,7 +73,9 @@
             </div>
         </div>
     </div>
-    <div class="tab-pane fade" id="jsonview" role="tabpanel" aria-labelledby="jsonview-tab">
+
+    @*Maybe redutant in this step, move to step, where is executed the sending data to Tempo or other app*@
+    @*<div class="tab-pane fade" id="jsonview" role="tabpanel" aria-labelledby="jsonview-tab">
         @foreach (var worklogResult in ViewModel.ImportWizardState.WorklogsFileResults)
         {
             if (worklogResult.IsFailure)
@@ -80,5 +86,5 @@
 
             <pre><code>@System.Text.Json.JsonSerializer.Serialize(worklogResult.Success, jsonOptions)</code></pre>
         }
-    </div>
+    </div>*@
 </div>

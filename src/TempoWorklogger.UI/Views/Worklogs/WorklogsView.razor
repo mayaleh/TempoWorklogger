@@ -19,8 +19,12 @@
 
 
 <div class="row mb-2">
-    <div class="col">
-        <button class="btn btn-primary" @onclick="@(() => ViewModel.CreateCommand.Execute())">Create</button>
+    <div class="col-auto">
+        <RadzenButton  ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="Add simplified worklog" Click="@InsertRow" Disabled=@(worklogToInsert != null || worklogToUpdate != null) />
+    </div>
+    <div class="col-auto">
+        @*TODO: hide under context buttons menu for more actions*@
+        <RadzenButton Shade="Shade.Lighter" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Icon="add_circle_outline" Text="Add detailed worklog" Click="@ViewModel.CreateDetailedCommand.Execute" Disabled=@(worklogToInsert != null || worklogToUpdate != null) />
     </div>
 </div>
 
@@ -30,33 +34,58 @@
     <div class="col-12">
         @*TODO inline editing https://blazor.radzen.com/docs/guides/components/datagrid.html#in-line-editing*@
 
-        <RadzenDataGrid Data="@ViewModel.Worklogs"
+        <RadzenDataGrid @ref="worklogsGrid"
+                        Data="@ViewModel.Worklogs"
                         TItem="Model.Db.Worklog"
+                        AllowAlternatingRows="false"
+                        EditMode="DataGridEditMode.Single"
                         AllowSorting="true"
                         AllowMultiColumnSorting="true"
                         AllowPaging="true"
                         PageSize="25"
-                        AllowFiltering="true">
+                        AllowFiltering="true"
+                        RowUpdate="@OnUpdateRow"
+                        RowCreate="@OnCreateRow">
             <Columns>
                 @*TODO: checkbox to select collection and do some batch action*@
                 <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Title="ID" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Title="Issue" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Title="Started" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Title="Ended" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Title="Issue">
+                    <EditTemplate Context="worklog">
+                        <RadzenTextBox @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" />
+                        <RadzenRequiredValidator Text="Issue key is required" Component="IssueKey" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Title="Started">
+                    <EditTemplate Context="worklog">
+                        <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style ="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Title="Ended">
+                    <EditTemplate Context="worklog">
+                        <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description">
+                    <EditTemplate Context="worklog">
+                        <RadzenTextArea @bind-Value="worklog.Description" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.Worklog" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                    <Template Context="data">
-                        <RadzenButton Shade="Shade.Lighter" Click=@(args => ViewModel.EditCommand.Execute(data.Id)) Icon="edit" Text="Edit" ButtonStyle="ButtonStyle.Primary" />
-                            <span> | </span>
-                        <RadzenButton 
-                            Shade="Shade.Lighter"
-                            Click=@(args => ViewModel.PrepareDeleteCommand.Execute(data))
-                            Icon="delete_forever"
-                            Text="Delete"
-                            ButtonStyle="ButtonStyle.Danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#deleteItemModal" />
+                    <Template Context="worklog">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(worklog))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))">
+                        </RadzenButton>
+                        <span> | </span>
+                        @*TODO: Context menu buttons for Detailed edit, send to, duplicate inline. duplicate detailed....;*@
+                        <RadzenButton Shade="Shade.Lighter" Click=@(args => ViewModel.EditCommand.Execute(worklog.Id)) Icon="edit" title="Edit detail" ButtonStyle="ButtonStyle.Light" />
+                        <RadzenButton Shade="Shade.Lighter" Click=@(args => DuplicateRow(worklog)) Icon="" title="Duplicate inline" ButtonStyle="ButtonStyle.Light" />
                     </Template>
+                    <EditTemplate Context="worklog">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(worklog))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@((args) => CancelEdit(worklog))">
+                        </RadzenButton>
+                    </EditTemplate>
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>

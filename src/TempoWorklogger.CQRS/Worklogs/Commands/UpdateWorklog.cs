@@ -1,6 +1,6 @@
 ﻿namespace TempoWorklogger.CQRS.Worklogs.Commands
 {
-    public record UpdateWorklogCommand(Worklog Worklog) : IRequest<unitResult>;
+    public record UpdateWorklogCommand(Worklog Worklog, bool DoUpdateAttributes = true) : IRequest<unitResult>;
 
     public class UpdateWorklogCommandHandler : IRequestHandler<UpdateWorklogCommand, unitResult>
     {
@@ -25,7 +25,7 @@
                     return dbConnection.UpdateAsync(worklog);
                 }, cancellationToken).ConfigureAwait(false);
 
-                if (updatedRowCount > 0 && worklog.Attributes.Any())
+                if (updatedRowCount > 0 && request.DoUpdateAttributes)
                 {
                     updatedRowCount += await UpdateAttributesAsync(this.dbService, dbConnection, worklog.Id, worklog.Attributes, cancellationToken);
                 }
@@ -47,6 +47,7 @@
         {
             return await dbService.AttemptAndRetry(async (CancellationToken cancellationToken) =>
             {
+                // TODO: transactional update
                 var actualItemIds = attributeKeyVals.Where(x => x.Id != 0)
                 .Select(x => x.Id)
                 .ToList();

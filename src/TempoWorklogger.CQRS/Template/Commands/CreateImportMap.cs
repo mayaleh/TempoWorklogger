@@ -2,13 +2,13 @@
 
 namespace TempoWorklogger.CQRS.Template.Commands
 {
-    public record CreateImportMapCommand(ImportMap ImportMap, ICollection<ColumnDefinition> Attributes) : IRequest<unitResult>;
+    public record CreateImportMapCommand(ImportMap ImportMap, ICollection<Model.Db.ColumnDefinition> Attributes) : IRequest<unitResult>;
 
-    public class CreateImportMapHandler : IRequestHandler<CreateImportMapCommand, unitResult>
+    public class CreateImportMapCommandHandler : IRequestHandler<CreateImportMapCommand, unitResult>
     {
         private readonly IDbService dbService;
 
-        public CreateImportMapHandler(IDbService dbService)
+        public CreateImportMapCommandHandler(IDbService dbService)
         {
             this.dbService = dbService;
         }
@@ -18,7 +18,7 @@ namespace TempoWorklogger.CQRS.Template.Commands
             try
             {
                 var importMap = request.ImportMap;
-                
+
                 if (string.IsNullOrWhiteSpace(importMap.Name))
                 {
                     return unitResult.Failed(new Exception("Name is required!"));
@@ -29,10 +29,20 @@ namespace TempoWorklogger.CQRS.Template.Commands
                 var dbConnection = await this.dbService.GetConnection(cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
-                var data = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
+                var affectedRows = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
                 {
                     return dbConnection.InsertAsync(importMap);
                 }, cancellationToken).ConfigureAwait(false);
+
+                if (importMap.ColumnDefinitions != null && importMap.ColumnDefinitions.Any())
+                {
+                    affectedRows += await CreateColumDefinitionsAsync(dbService, dbConnection, importMap.Id, importMap.ColumnDefinitions, cancellationToken);
+                }
+
+                if (attributes != null && attributes.Any())
+                {
+                    affectedRows += await CreateColumDefinitionsAsync(dbService, dbConnection, importMap.Id, attributes, cancellationToken);
+                }
 
                 return unitResult.Succeeded(Maya.Ext.Unit.Default);
             }
@@ -40,6 +50,24 @@ namespace TempoWorklogger.CQRS.Template.Commands
             {
                 return unitResult.Failed(e);
             }
+        }
+
+        private static async Task<int> CreateColumDefinitionsAsync(
+            IDbService dbService,
+            SQLite.SQLiteAsyncConnection dbConnection,
+            int importMapId,
+            ICollection<Model.Db.ColumnDefinition> columnDefinitions,
+            CancellationToken cancellationToken)
+        {
+            foreach (var columnDefinition in columnDefinitions)
+            {
+                columnDefinition.ImportMapId = importMapId;
+            }
+
+            return await dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
+            {
+                return dbConnection.InsertAllAsync(columnDefinitions);
+            }, cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -12,7 +12,6 @@ namespace TempoWorklogger.UI.Commons
         [Parameter]
         public string ProcessMessage { get; set; } = null!;
 
-
         private int progressState;
 
         protected override void OnInitialized()

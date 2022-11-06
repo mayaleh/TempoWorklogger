@@ -13,7 +13,7 @@ namespace TempoWorklogger.Service
             return importMap.FileType switch
             {
                 FileTypeKinds.Xlsx => await new ExcelReaderService().ReadWorklogFileAsync(fileStream, importMap, onProgressChanged),
-                _ => throw new NotImplementedException()
+                _ => throw new ApplicationException("File type is not supported.")
             };
         }
     }

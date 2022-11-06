@@ -31,15 +31,19 @@ namespace TempoWorklogger.ViewModels.Template
 
             if (id == null)
             {
-                foreach (var property in typeof(Model.Db.Worklog).GetProperties())
-                {
-                    if (property.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
-                    {
-                        continue;
-                    }
-
-                    viewModel.ImportMapModel.ColumnDefinitions.Add(new ColumnDefinition { Name = property.Name });
-                }
+                await viewModel.Mediator.Send(new CQRS.ColumnDefinitions.Queries.GetAvailableColumnsQuery())
+                    .EitherAsync(
+                        success =>
+                        {
+                            viewModel.ImportMapModel.ColumnDefinitions = success;
+                            return Task.FromResult(unitResult.Succeeded(Unit.Default));
+                        },
+                        async failure =>
+                        {
+                            await viewModel.NotificationService.ShowError($"Failled to load columns. Message: {failure.Message}");
+                            return unitResult.Failed(failure);
+                        }
+                    );
                 return Unit.Default;
             }
 

@@ -25,15 +25,21 @@ namespace TempoWorklogger.ViewModels.Worklogs
             Action onUiChanged) : base(mediator, notificationService, onUiChanged)
         {
             LoadCommand = new CommandAsync(Load);
-            CreateCommand = new Command(Create);
+            CreateDetailedCommand = new Command(CreateDetailed);
             EditCommand = new TempoWorklogger.UI.Core.Command<long>(Edit);
             PrepareDeleteCommand = new TempoWorklogger.UI.Core.Command<Model.Db.Worklog>(PrepareDeletion);
             DeleteCommand = new CommandAsync(Delete);
 
+            CreateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(CreateInline);
+            UpdateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(UpdateInline);
+
             LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
-            CreateCommand!.OnExecuteChanged += this.CreateCommand_OnExecuteChanged;
+            CreateDetailedCommand!.OnExecuteChanged += this.CreateDetailedCommand_OnExecuteChanged;
             EditCommand!.OnExecuteChanged += this.EditCommand_OnExecuteChanged;
             DeleteCommand!.OnExecuteChanged += this.DeleteCommand_OnExecuteChanged;
+
+            CreateInlineCommand!.OnExecuteChanged += this.CreateInlineCommand_OnExecuteChanged;
+            UpdateInlineCommand!.OnExecuteChanged += this.UpdateInlineCommand_OnExecuteChanged;
             this.navigationManager = navigationManager;
         }
 
@@ -45,9 +51,13 @@ namespace TempoWorklogger.ViewModels.Worklogs
 
         public ICommand<long> EditCommand { get; }
 
-        public ICommand CreateCommand { get; }
+        public ICommand CreateDetailedCommand { get; }
 
         public ICommand<Model.Db.Worklog> PrepareDeleteCommand { get; }
+
+        public ICommandAsync<Model.Db.Worklog> CreateInlineCommand { get; }
+
+        public ICommandAsync<Model.Db.Worklog> UpdateInlineCommand { get; }
 
         public void Dispose()
         {
@@ -55,9 +65,9 @@ namespace TempoWorklogger.ViewModels.Worklogs
             {
                 this.LoadCommand.OnExecuteChanged -= LoadCommand_OnExecuteChanged;
             }
-            if (this.CreateCommand != null)
+            if (this.CreateDetailedCommand != null)
             {
-                this.CreateCommand.OnExecuteChanged -= CreateCommand_OnExecuteChanged;
+                this.CreateDetailedCommand.OnExecuteChanged -= CreateDetailedCommand_OnExecuteChanged;
             }
             if (this.EditCommand != null)
             {
@@ -67,11 +77,21 @@ namespace TempoWorklogger.ViewModels.Worklogs
             {
                 this.DeleteCommand.OnExecuteChanged -= DeleteCommand_OnExecuteChanged;
             }
+            if (this.CreateInlineCommand != null)
+            {
+                this.CreateInlineCommand.OnExecuteChanged -= CreateInlineCommand_OnExecuteChanged;
+            }
+            if (this.UpdateInlineCommand != null)
+            {
+                this.UpdateInlineCommand.OnExecuteChanged -= UpdateInlineCommand_OnExecuteChanged;
+            }
         }
 
         private void LoadCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
-        private void CreateCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
+        private void CreateDetailedCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
+        private void CreateInlineCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
         private void EditCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
+        private void UpdateInlineCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
         private void DeleteCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
 
         private async Task<Maya.Ext.Unit> Load()
@@ -89,9 +109,35 @@ namespace TempoWorklogger.ViewModels.Worklogs
             return Maya.Ext.Unit.Default;
         }
 
-        private void Create()
+        private void CreateDetailed()
         {
             this.navigationManager.NavigateTo("/worklog/create");
+        }
+
+        private async Task<Maya.Ext.Unit> CreateInline(Model.Db.Worklog worklog)
+        {
+            var result = await this.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand(worklog));
+
+            if (result.IsFailure)
+            {
+                Console.WriteLine(result.Failure.Message);
+                await this.NotificationService.ShowError(result.Failure.Message);
+            }
+            // maybe reload
+            return Maya.Ext.Unit.Default;
+        }
+
+        private async Task<Maya.Ext.Unit> UpdateInline(Model.Db.Worklog worklog)
+        {
+            var result = await this.Mediator.Send(new CQRS.Worklogs.Commands.UpdateWorklogCommand(worklog, false));
+
+            if (result.IsFailure)
+            {
+                Console.WriteLine(result.Failure.Message);
+                await this.NotificationService.ShowError(result.Failure.Message);
+            }
+            // maybe reload
+            return Maya.Ext.Unit.Default;
         }
 
         private Maya.Ext.Unit Edit(long id)

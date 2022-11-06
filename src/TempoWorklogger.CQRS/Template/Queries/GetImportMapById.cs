@@ -31,7 +31,7 @@
 
                 data.ColumnDefinitions = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
                 {
-                    return dbConnection.Table<ColumnDefinition>()
+                    return dbConnection.Table<Model.Db.ColumnDefinition>()
                     .Where(i => i.ImportMapId == data.Id)
                         .ToListAsync();
                 }, cancellationToken).ConfigureAwait(false);

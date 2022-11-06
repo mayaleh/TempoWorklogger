@@ -1,4 +1,5 @@
-﻿using Polly;
+﻿using Maya.Ext.Rop;
+using Polly;
 using SQLite;
 using TempoWorklogger.Contract.Services;
 using TempoWorklogger.Model.Db;
@@ -7,6 +8,8 @@ namespace TempoWorklogger.Service
 {
     public class DbService : IDbService
     {
+        static TimeSpan PollyRetryAttempt(int attemptNumber) => TimeSpan.FromMilliseconds(Math.Pow(2, attemptNumber));
+
         private readonly Lazy<SQLiteAsyncConnection> databaseConnectionHolder;
         private SQLiteAsyncConnection Connection => this.databaseConnectionHolder.Value;
 
@@ -29,14 +32,11 @@ namespace TempoWorklogger.Service
             return conn;
         }
 
-        // TODO: provide ROP
         /// <inheritdoc/>
         public Task<T> AttemptAndRetry<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken, int numRetries = 10)
         {
-            static TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromMilliseconds(Math.Pow(2, attemptNumber));
-            
             return Policy.Handle<SQLite.SQLiteException>()
-                .WaitAndRetryAsync(numRetries, pollyRetryAttempt)
+                .WaitAndRetryAsync(numRetries, PollyRetryAttempt)
                 .ExecuteAsync(action, cancellationToken: cancellationToken);
         }
 
@@ -51,7 +51,26 @@ namespace TempoWorklogger.Service
             await conn.CreateTableAsync<ColumnDefinition>().ConfigureAwait(false);
             await conn.CreateTableAsync<ImportMap>().ConfigureAwait(false);
             await conn.CreateTableAsync<CustomAttributeKeyVal>().ConfigureAwait(false);
+            await conn.CreateTableAsync<WorklogLog>().ConfigureAwait(false);
             await conn.CreateTableAsync<Worklog>().ConfigureAwait(false);
+            //await conn.CreateTableAsync<IntegrationSettings>().ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<T, Exception>> ExecuteAttemptWithRetry<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken, int numRetries = 10)
+        {
+            try
+            {
+                var result = await Policy.Handle<SQLite.SQLiteException>()
+                .WaitAndRetryAsync(numRetries, PollyRetryAttempt)
+                .ExecuteAsync(action, cancellationToken: cancellationToken);
+
+                return Maya.Ext.Rop.Result<T, Exception>.Succeeded(result);
+            }
+            catch (Exception e)
+            {
+                return Maya.Ext.Rop.Result<T, Exception>.Failed(e);
+            }
         }
     }
 }

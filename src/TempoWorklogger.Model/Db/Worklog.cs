@@ -1,18 +1,19 @@
 ﻿using SQLite;
 using SQLiteNetExtensions.Attributes;
+using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Model.Db
 {
-    public class Worklog
+    public class Worklog : ICloneable
     {
         [PrimaryKey, AutoIncrement]
         public long Id { get; set; }
 
         /// <summary>
-        /// Jira Account ID of the author
+        /// Jira Account ID of the author, maybe should be part of Integration setting model
         /// </summary>
-        [MaxLength(378)]
-        public string? AuthorAccountId { get; set; }
+        //[MaxLength(378)]
+        //public string? AuthorAccountId { get; set; }
 
         /// <summary>
         /// Worklog description
@@ -40,5 +41,16 @@ namespace TempoWorklogger.Model.Db
 
         [OneToMany]
         public ICollection<CustomAttributeKeyVal> Attributes { get; set; } = new List<CustomAttributeKeyVal>();
+
+        [OneToMany]
+        public ICollection<WorklogLog> Logs { get; set; } = new List<WorklogLog>();
+
+        public object Clone()
+        {
+            var duplicatesOf = (Model.Db.Worklog)this.MemberwiseClone();
+            duplicatesOf.Id = default;
+            duplicatesOf.Logs = new List<WorklogLog>();
+            return duplicatesOf;
+        }
     }
 }

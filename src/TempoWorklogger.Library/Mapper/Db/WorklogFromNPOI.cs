@@ -151,10 +151,10 @@ namespace TempoWorklogger.Library.Mapper.Db
                 worklog.Description = columnDefinition.Value;
             }
 
-            if (columnDefinition.Name == nameof(Worklog.AuthorAccountId))
-            {
-                worklog.AuthorAccountId = columnDefinition.Value;
-            }
+            //if (columnDefinition.Name == nameof(Worklog.AuthorAccountId))
+            //{
+            //    worklog.AuthorAccountId = columnDefinition.Value;
+            //}
 
             if (columnDefinition.Name.StartsWith(ModelsConstant.AttributePrefix))
             {
@@ -234,10 +234,10 @@ namespace TempoWorklogger.Library.Mapper.Db
                 worklog.Description = cell.ToString();
             }
 
-            if (columnDefinition.Name == nameof(Worklog.AuthorAccountId))
-            {
-                worklog.AuthorAccountId = cell.ToString();
-            }
+            //if (columnDefinition.Name == nameof(Worklog.AuthorAccountId))
+            //{
+            //    worklog.AuthorAccountId = cell.ToString();
+            //}
 
 
             if (columnDefinition.Name.StartsWith(ModelsConstant.AttributePrefix))

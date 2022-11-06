@@ -21,11 +21,18 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             PreviousStepCommand = new CommandAsync(this.viewModel.Actions.PreviousStep);
             CancelImportCommand = new CommandAsync(this.viewModel.Actions.CancelImport);
             ReadFileContentCommand = new CommandAsync(this.viewModel.Actions.ReadFileContent);
+            ExecuteImportCommand = new CommandAsync(this.viewModel.Actions.ExecuteImportToDb);
+
+            NextStepCommand.OnExecuteChanged += NextStepCommand_OnExecuteChanged;
+            PreviousStepCommand.OnExecuteChanged += PreviousStepCommand_OnExecuteChanged;
+            ReadFileContentCommand.OnExecuteChanged += ReadFileContentCommand_OnExecuteChanged;
         }
 
         private void NextStepCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
 
         private void PreviousStepCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
+
+        private void ReadFileContentCommand_OnExecuteChanged(object sender, bool e) => this.viewModel.IsBusy = e;
 
         public void Dispose()
         {
@@ -37,6 +44,10 @@ namespace TempoWorklogger.ViewModels.ImportWizard
             {
                 this.PreviousStepCommand.OnExecuteChanged -= PreviousStepCommand_OnExecuteChanged;
             }
+            if (this.ReadFileContentCommand != null)
+            {
+                this.ReadFileContentCommand.OnExecuteChanged -= ReadFileContentCommand_OnExecuteChanged;
+            }
         }
 
         public ICommandAsync NextStepCommand { get; private set; }
@@ -46,5 +57,7 @@ namespace TempoWorklogger.ViewModels.ImportWizard
         public ICommandAsync CancelImportCommand { get; private set; }
 
         public ICommandAsync ReadFileContentCommand { get; private set; }
+
+        public ICommandAsync ExecuteImportCommand { get; private set; }
     }
 }

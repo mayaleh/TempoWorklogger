@@ -3,15 +3,19 @@ using SQLiteNetExtensions.Attributes;
 
 namespace TempoWorklogger.Model.Db
 {
-    public class CustomAttributeKeyVal
+    public class WorklogLog
     {
         [PrimaryKey, AutoIncrement]
         public long Id { get; set; }
 
-        [MaxLength(255)]
-        public string? Key { get; set; }
+        public WorklogLogType Type { get; set; }
+        
+        public LogSeverity Severity { get; set; }
 
-        public string? Value { get; set; }
+        public DateTime Created { get; set; }
+
+        [MaxLength(378)]
+        public string? Message { get; set; }
 
         [ForeignKey(typeof(Worklog))]
         public long WorklogId { get; set; }

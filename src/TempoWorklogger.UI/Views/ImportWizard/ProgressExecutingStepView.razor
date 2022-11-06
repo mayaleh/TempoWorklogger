@@ -1,0 +1,133 @@
+﻿@*
+<div>
+    @if (this.isDone == false)
+    {
+        <div class="col-12 mb-2">
+            @if (this.isExecuting)
+            {
+                <h4>Importing to Tempo... @this.processedProgress / 100%</h4>
+            }
+
+            @if (this.isExecuting == false)
+            {
+                <h4>Imported to Tempo... @this.processedProgress / 100% and stopped.</h4>
+            }
+        </div>
+        @if (this.isExecuting)
+        {
+            <div class="col-12">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@this.processedProgress" aria-valuemin="0" aria-valuemax="100" style="width: @(this.processedProgress)%"></div>
+                </div>
+            </div>
+        }
+    }
+
+</div>
+
+<div class="row mt-2 mb-3 align-items-center justify-content-center">
+    <div class="col-auto">
+        @if (this.isDone == false)
+        {
+            @if (this.isExecuting)
+            {
+                <button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-pause"></i> Pause importing</button>
+            }
+
+            @if (this.isExecuting == false)
+            {
+                <button class="btn btn-outline-success" @onclick="OnContinueImportClicked"><i class="fa-solid fa-play"></i> Continue importing</button>
+            }
+        }
+
+        @if (this.isDone)
+        {
+            <div class="alert alert-success" role="alert">
+                Import completed!
+            </div>
+        }
+    </div>
+</div>
+*@
+
+<CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
+    <TempoWorklogger.UI.Commons.ProgressBar ProcessMessage="Importing data from the file into local storage..." />
+</CascadingValue>
+
+
+@if (ViewModel.ImportWizardState.WorklogsDbResults == null)
+{
+    return;
+}
+
+<div class="row mt-2">
+    <div class="col-12">
+        <RadzenDataGrid Data="@ViewModel.ImportWizardState.WorklogsDbResults.Where(x => x.IsFailure).Select(x => x.Failure)"
+                        TItem="Exception"
+                        AllowSorting="true"
+                        AllowMultiColumnSorting="true"
+                        AllowPaging="false"
+                        AllowFiltering="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="Exception" Property="@nameof(Exception.Message)" Title="Message" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>
+<div class="row mt-2 mb-3">
+    <div class="col-12">
+        <RadzenDataGrid Data="@ViewModel.ImportWizardState.WorklogsDbResults.Where(x => x.IsSuccess).Select(x => x.Success)"
+                        TItem="Model.Db.Worklog"
+                        AllowSorting="true"
+                        AllowMultiColumnSorting="true"
+                        AllowPaging="false"
+                        AllowFiltering="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Title="ID" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Title="Issue" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Title="Started" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Title="Ended" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
+            </Columns>
+        </RadzenDataGrid>
+@*
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="cells-positions">
+                    <td scope="col">@(nameof(WorklogResponse.createdAt))</td>
+                    <td scope="col">@(nameof(WorklogResponse.tempoWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.jiraWorklogId))</td>
+                    <td scope="col">@(nameof(WorklogResponse.self))</td>
+                    <td scope="col">@(nameof(WorklogResponse.issue))</td>
+                </tr>
+            </thead>
+            <tbody>
+                <Virtualize Items="@ImportState.WorklogResponseResults" Context="worklogResponseResult">
+                    @if (worklogResponseResult.IsFailure)
+                    {
+                        <tr class="bg-danger">
+                            <td colspan="5">
+                                For worklog:@(worklogResponseResult.Failure.Item1.IssueKey)
+                                @(worklogResponseResult.Failure.Item1.StartDate)
+                                @(worklogResponseResult.Failure.Item1.StartTime)
+                                @(worklogResponseResult.Failure.Item1.Description)
+                                Error: @(worklogResponseResult.Failure.Item2.Message)
+                            </td>
+                        </tr>
+                    }
+
+                    @if (worklogResponseResult.IsSuccess)
+                    {
+                        <tr>
+                            <td>@(worklogResponseResult.Success.Item2.createdAt)</td>
+                            <td>@(worklogResponseResult.Success.Item2.tempoWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.jiraWorklogId)</td>
+                            <td>@(worklogResponseResult.Success.Item2.self)</td>
+                            <td>@(worklogResponseResult.Success.Item2.issue.self)</td>
+                        </tr>
+                    }
+                </Virtualize>
+            </tbody>
+        </table>*@
+    </div>
+</div>
