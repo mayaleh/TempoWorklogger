@@ -48,12 +48,12 @@ namespace TempoWorklogger.Service
         {
             await conn.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
 
+            await conn.CreateTableAsync<IntegrationSettings>().ConfigureAwait(false);
             await conn.CreateTableAsync<ColumnDefinition>().ConfigureAwait(false);
             await conn.CreateTableAsync<ImportMap>().ConfigureAwait(false);
             await conn.CreateTableAsync<CustomAttributeKeyVal>().ConfigureAwait(false);
             await conn.CreateTableAsync<WorklogLog>().ConfigureAwait(false);
             await conn.CreateTableAsync<Worklog>().ConfigureAwait(false);
-            //await conn.CreateTableAsync<IntegrationSettings>().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

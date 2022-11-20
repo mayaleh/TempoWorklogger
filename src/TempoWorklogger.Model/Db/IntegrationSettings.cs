@@ -13,7 +13,6 @@ namespace TempoWorklogger.Model.Db
         [MaxLength(255)]
         public string Name { get; set; } = null!;
 
-
         /// <summary>
         /// Access token of the Tempo importer account
         /// </summary>
@@ -24,7 +23,7 @@ namespace TempoWorklogger.Model.Db
         /// 
         /// </summary>
         [MaxLength(512)]
-        public string AuthorAccountToken { get; set; } = null!;
+        public string AuthorAccountId { get; set; } = null!;
 
         /// <summary>
         /// Endpoint.

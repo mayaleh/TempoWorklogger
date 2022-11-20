@@ -19,9 +19,5 @@ namespace TempoWorklogger.Model.Tempo
         public int TimeSpentSeconds { get; set; }
 
         public ICollection<AttributeKeyVal> Attributes { get; set; } = new List<AttributeKeyVal>();
-
-        // Ignore json
-        [JsonIgnore]
-        public TimeOnly EndTime { get; set; }
     }
 }

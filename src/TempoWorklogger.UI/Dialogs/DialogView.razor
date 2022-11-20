@@ -1,0 +1,25 @@
+﻿
+<div class="modal fade" id="@Identifier" tabindex="-1" aria-labelledby="@(Identifier)Label" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: @Width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="@(Identifier)Label">@Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" disabled="@IsCancelDisabled" @onclick="@DefaultCancelClicked"></button>
+            </div>
+            <div class="modal-body">
+                @Content
+            </div>
+            <div class="modal-footer">
+                @if(ButtonsContent == null)
+                {
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@DefaultCancelClicked" disabled="@IsCancelDisabled">Cancel</button>
+                    <button type="button" data-bs-dismiss="modal" @onclick="@OnConfirmClicked" class="btn btn-primary" disabled="@IsConfirmDisabled">@ConfirmButtonText</button>
+                }
+                else
+                {
+                    @ButtonsContent
+                }
+            </div>
+        </div>
+    </div>
+</div>

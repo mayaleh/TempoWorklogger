@@ -1,4 +1,7 @@
-﻿namespace TempoWorklogger.CQRS.Worklogs.Commands
+﻿using TempoWorklogger.Library.Helper;
+using TempoWorklogger.Library;
+
+namespace TempoWorklogger.CQRS.Worklogs.Commands
 {
     public record UpdateWorklogCommand(Worklog Worklog, bool DoUpdateAttributes = true) : IRequest<unitResult>;
 
@@ -16,6 +19,7 @@
             try
             {
                 var worklog = request.Worklog;
+                worklog.TimeSpentSeconds = WorklogHelper.CalculateTimeSpentSeconds(CommonConstants.Zero, worklog.StartTime, worklog.EndTime);
 
                 var dbConnection = await this.dbService.GetConnection(cancellationToken: cancellationToken)
                     .ConfigureAwait(false);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Radzen;
 using Radzen.Blazor;
 using TempoWorklogger.Contract.UI.ViewModels.Worklogs;
 
@@ -13,6 +14,17 @@ namespace TempoWorklogger.UI.Views.Worklogs
 
         Model.Db.Worklog? worklogToInsert;
         Model.Db.Worklog? worklogToUpdate;
+        int rowsNumber = 25;
+
+        //void OnSelectRow(Model.Db.Worklog worklog)
+        //{
+        //    ViewModel.SelectedWorklogs.Add(worklog);
+        //}
+
+        //void OnDeselectRow(Model.Db.Worklog worklog)
+        //{
+        //    ViewModel.SelectedWorklogs.Remove(worklog);
+        //}
 
         async Task EditRow(Model.Db.Worklog worklog)
         {
@@ -22,24 +34,10 @@ namespace TempoWorklogger.UI.Views.Worklogs
 
         async Task OnUpdateRow(Model.Db.Worklog worklog)
         {
-            if (worklog == worklogToInsert)
-            {
-                worklogToInsert = null;
-            }
-
+            worklogToInsert = null;
             worklogToUpdate = null;
 
             await ViewModel.UpdateInlineCommand.Execute(worklog);
-
-            // TODO: viewmodel.Commands.UpdateInlineCommand.Execute(worklog);
-            //dbContext.Update(worklog);
-
-            // For demo purposes only
-            //worklog.Customer = dbContext.Customers.Find(worklog.CustomerID);
-            //worklog.Employee = dbContext.Employees.Find(worklog.EmployeeID);
-
-            // For production
-            //dbContext.SaveChanges();
         }
 
         async Task SaveRow(Model.Db.Worklog worklog)
@@ -58,34 +56,6 @@ namespace TempoWorklogger.UI.Views.Worklogs
 
             worklogsGrid!.CancelEditRow(worklog);
         }
-
-        //async Task DeleteRow(Model.Db.Worklog worklog)
-        //{
-        //    if (worklog == worklogToInsert)
-        //    {
-        //        worklogToInsert = null;
-        //    }
-
-        //    if (worklog == worklogToUpdate)
-        //    {
-        //        worklogToUpdate = null;
-        //    }
-
-        //    /*
-        //    if (worklogs.Contains(worklog))
-        //    {
-        //        call delete command?
-        //        // For demo purposes only
-        //        worklogs.Remove(worklog);
-
-        //        await worklogsGrid.Reload();
-        //    }
-        //    else
-        //    {
-        //        worklogsGrid.CancelEditRow(worklog);
-        //        await worklogsGrid.Reload();
-        //    }*/
-        //}
 
         async Task DuplicateRow(Model.Db.Worklog worklog)
         {
@@ -106,6 +76,9 @@ namespace TempoWorklogger.UI.Views.Worklogs
 
         async Task OnCreateRow(Model.Db.Worklog worklog)
         {
+            worklogToInsert = null;
+            worklogToUpdate = null;
+
             await ViewModel.CreateInlineCommand.Execute(worklog);
         }
     }

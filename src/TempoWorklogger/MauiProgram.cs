@@ -35,7 +35,7 @@ public static class MauiProgram
 			return appConfig;
 		});
 
-        builder.Services.AddScoped<ITempoService, TempoService>();
+        builder.Services.AddScoped<ITempoServiceFactory, TempoServiceFactory>();
         builder.Services.AddScoped<IFileReaderService, FileReaderService>();
 
         builder.Services.AddSingleton<IDbService>(options => {

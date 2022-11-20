@@ -1,0 +1,19 @@
+﻿@page "/integrations-settings"
+
+<CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.IntegrationSettings.IIntegrationSettingsViewModel))" Value="@vm">
+    <TempoWorklogger.UI.Containers.ContentContainer IsLoading="@vm.IsInit" IsBusy="@vm.IsBusy">
+        <StaticContent>
+            <div class="row">
+                <div class="col">
+                    <h3 class="mb-2">Integrations settings</h3>
+                </div>
+                <div class="col-auto">
+                    <GoBack />
+                </div>
+            </div>
+        </StaticContent>
+        <Content>
+            <TempoWorklogger.UI.Views.IntegrationSettings.IntegrationSettingsView />
+        </Content>
+    </TempoWorklogger.UI.Containers.ContentContainer>
+</CascadingValue>

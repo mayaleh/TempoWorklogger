@@ -36,6 +36,16 @@ namespace TempoWorklogger.Library.Service
 
         private async Task<Result<T, Exception>> HttpPost<T>(UriRequest uriRequest, object data, Func<HttpResponseMessage, Exception>? onError = null)
         {
+            if (uriRequest is null)
+            {
+                throw new ArgumentNullException(nameof(uriRequest));
+            }
+
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             var logAction = $"{nameof(TempoService)}.{nameof(TempoService.HttpPost)}";
             var content = "";
             try
@@ -56,64 +66,62 @@ namespace TempoWorklogger.Library.Service
 
                 var httpClientHandler = new HttpClientHandler();
 
-                using (var client = new HttpClient(httpClientHandler)
+                using var client = new HttpClient(httpClientHandler)
                 {
                     Timeout = TimeSpan.FromSeconds(TimeoutRequestSeconds)
+                };
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", this.accessToken);
+
+                var bodyContent = JsonSerializer.Serialize(data,
+                    new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
+                using (var message = new HttpRequestMessage(HttpMethod.Post, uri)
+                {
+                    Content = new System.Net.Http.StringContent(
+                        bodyContent,
+                        Encoding.UTF8,
+                        "application/json")
                 })
                 {
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", this.accessToken);
-                    
-                    var bodyContent = JsonSerializer.Serialize(data,
-                        new JsonSerializerOptions
-                        {
-                            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                        });
+                    var httpResponseMessage = await client.SendAsync(message);
 
-                    using (var message = new HttpRequestMessage(HttpMethod.Post, uri)
+                    if (httpResponseMessage.IsSuccessStatusCode)
                     {
-                        Content = new System.Net.Http.StringContent(
-                            bodyContent,
-                            Encoding.UTF8,
-                            "application/json")
-                    })
-                    {
-                        var httpResponseMessage = await client.SendAsync(message);
-
-                        if (httpResponseMessage.IsSuccessStatusCode)
+                        if (typeof(T) == typeof(Maya.Ext.Unit)) // void is not value type, this is for response, that has not any body response
                         {
-                            if (typeof(T) == typeof(Maya.Ext.Unit)) // void is not value type, this is for response, that has not any body response
-                            {
-                                return Result<T, Exception>.Succeeded((T)Convert.ChangeType(Maya.Ext.Unit.Default, typeof(T)));
-                            }
-
-                            if (typeof(T) == typeof(byte[]))
-                            {
-                                var result = await httpResponseMessage.Content.ReadAsByteArrayAsync();
-                                return Result<T, Exception>.Succeeded((T)Convert.ChangeType(result, typeof(T)));
-                            }
-
-                            content = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                            if (typeof(T) == typeof(string))
-                            {
-                                return Result<T, Exception>.Succeeded((T)Convert.ChangeType(content, typeof(T)));
-                            }
-
-                            T reusultData = JsonSerializer.Deserialize<T>(content);
-
-                            return Result<T, Exception>.Succeeded(reusultData);
+                            return Result<T, Exception>.Succeeded((T)Convert.ChangeType(Maya.Ext.Unit.Default, typeof(T)));
                         }
 
-                        if (onError != null)
+                        if (typeof(T) == typeof(byte[]))
                         {
-                            var ownException = onError.Invoke(httpResponseMessage);
-
-                            return Result<T, Exception>.Failed(ownException);
+                            var result = await httpResponseMessage.Content.ReadAsByteArrayAsync();
+                            return Result<T, Exception>.Succeeded((T)Convert.ChangeType(result, typeof(T)));
                         }
 
-                        return Result<T, Exception>.Failed(new Exception(await httpResponseMessage.Content.ReadAsStringAsync()));
+                        content = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                        if (typeof(T) == typeof(string))
+                        {
+                            return Result<T, Exception>.Succeeded((T)Convert.ChangeType(content, typeof(T)));
+                        }
+
+                        T reusultData = JsonSerializer.Deserialize<T>(content);
+
+                        return Result<T, Exception>.Succeeded(reusultData);
                     }
+
+                    if (onError != null)
+                    {
+                        var ownException = onError.Invoke(httpResponseMessage);
+
+                        return Result<T, Exception>.Failed(ownException);
+                    }
+
+                    return Result<T, Exception>.Failed(new Exception(await httpResponseMessage.Content.ReadAsStringAsync()));
                 }
             }
             catch (TaskCanceledException ex)

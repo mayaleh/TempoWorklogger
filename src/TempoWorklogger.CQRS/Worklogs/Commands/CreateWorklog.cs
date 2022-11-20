@@ -1,4 +1,6 @@
 ﻿using Maya.Ext.Func.Rop;
+using TempoWorklogger.Library;
+using TempoWorklogger.Library.Helper;
 
 namespace TempoWorklogger.CQRS.Worklogs.Commands
 {
@@ -17,7 +19,6 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
         {
             try
             {
-                var worklog = request.Worklog;
 
                 if (request.creationType == WorklogLogType.ImportFromFile && request.creationTimestamp == null)
                 {
@@ -26,6 +27,9 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
 
                 var dbConnection = await this.dbService.GetConnection(cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
+
+                var worklog = request.Worklog;
+                worklog.TimeSpentSeconds = WorklogHelper.CalculateTimeSpentSeconds(CommonConstants.Zero, worklog.StartTime, worklog.EndTime);
 
                 var insertedRowCountResult = await this.dbService.ExecuteAttemptWithRetry((CancellationToken cancellationToken) =>
                     {

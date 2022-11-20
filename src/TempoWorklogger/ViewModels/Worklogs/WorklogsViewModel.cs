@@ -1,22 +1,19 @@
-﻿using Maya.Ext.Func.Rop;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using TempoWorklogger.Contract.UI;
 using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Worklogs;
-using TempoWorklogger.CQRS.Worklogs.Queries;
+using TempoWorklogger.Model.Db;
 using TempoWorklogger.UI.Core;
 using Command = TempoWorklogger.UI.Core.Command;
 
 namespace TempoWorklogger.ViewModels.Worklogs
 {
-    using unitResult = Maya.Ext.Rop.Result<Maya.Ext.Unit, Exception>;
-
     public sealed class WorklogsViewModel : BaseViewModel, IWorklogsViewModel
     {
-        private readonly NavigationManager navigationManager;
+        public readonly NavigationManager NavigationManager;
 
-        private Model.Db.Worklog worklogToBeDeleted = new();
+        private readonly WorklogsActions worklogsActions;
 
         public WorklogsViewModel(
             IMediator mediator,
@@ -24,14 +21,18 @@ namespace TempoWorklogger.ViewModels.Worklogs
             NavigationManager navigationManager,
             Action onUiChanged) : base(mediator, notificationService, onUiChanged)
         {
-            LoadCommand = new CommandAsync(Load);
-            CreateDetailedCommand = new Command(CreateDetailed);
-            EditCommand = new TempoWorklogger.UI.Core.Command<long>(Edit);
-            PrepareDeleteCommand = new TempoWorklogger.UI.Core.Command<Model.Db.Worklog>(PrepareDeletion);
-            DeleteCommand = new CommandAsync(Delete);
+            worklogsActions = new WorklogsActions(this);
 
-            CreateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(CreateInline);
-            UpdateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(UpdateInline);
+            LoadCommand = new CommandAsync(worklogsActions.Load);
+            CreateDetailedCommand = new Command(worklogsActions.CreateDetailed);
+            EditCommand = new TempoWorklogger.UI.Core.Command<long>(worklogsActions.Edit);
+            PrepareDeleteCommand = new TempoWorklogger.UI.Core.Command<Model.Db.Worklog>(worklogsActions.PrepareDeletion);
+            DeleteCommand = new CommandAsync(worklogsActions.Delete);
+
+            CreateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(worklogsActions.CreateInline);
+            UpdateInlineCommand = new TempoWorklogger.UI.Core.CommandAsync<Model.Db.Worklog>(worklogsActions.UpdateInline);
+
+            SendSelectedToApiCommand = new CommandAsync<Model.Db.IntegrationSettings>(worklogsActions.SendSelectedToTempoApi);
 
             LoadCommand!.OnExecuteChanged += this.LoadCommand_OnExecuteChanged;
             CreateDetailedCommand!.OnExecuteChanged += this.CreateDetailedCommand_OnExecuteChanged;
@@ -40,10 +41,14 @@ namespace TempoWorklogger.ViewModels.Worklogs
 
             CreateInlineCommand!.OnExecuteChanged += this.CreateInlineCommand_OnExecuteChanged;
             UpdateInlineCommand!.OnExecuteChanged += this.UpdateInlineCommand_OnExecuteChanged;
-            this.navigationManager = navigationManager;
+            NavigationManager = navigationManager;
         }
 
-        public List<Model.Db.Worklog> Worklogs { get; private set; }
+        public List<Model.Db.Worklog> Worklogs { get; set; } = new();
+
+        public IList<Model.Db.Worklog> SelectedWorklogs { get; set; } = new List<Model.Db.Worklog>();
+
+        public IList<Model.Db.IntegrationSettings> IntegrationSettingsList { get; set; } = new List<Model.Db.IntegrationSettings>();
 
         public ICommandAsync LoadCommand { get; }
 
@@ -58,6 +63,10 @@ namespace TempoWorklogger.ViewModels.Worklogs
         public ICommandAsync<Model.Db.Worklog> CreateInlineCommand { get; }
 
         public ICommandAsync<Model.Db.Worklog> UpdateInlineCommand { get; }
+
+        public ICommandAsync<Model.Db.IntegrationSettings> SendSelectedToApiCommand { get; } // set type
+
+        public Action<int> OnProgressChanged { get; set; }
 
         public void Dispose()
         {
@@ -94,88 +103,5 @@ namespace TempoWorklogger.ViewModels.Worklogs
         private void UpdateInlineCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
         private void DeleteCommand_OnExecuteChanged(object sender, bool e) => this.IsBusy = e;
 
-        private async Task<Maya.Ext.Unit> Load()
-        {
-            var result = await this.Mediator.Send(new GetWorklogsQuery());
-
-            if (result.IsFailure)
-            {
-                Console.WriteLine(result.Failure.Message);
-                await this.NotificationService.ShowError(result.Failure.Message);
-            }
-
-            Worklogs = result.Success?.ToList() ?? new List<Model.Db.Worklog>();
-
-            return Maya.Ext.Unit.Default;
-        }
-
-        private void CreateDetailed()
-        {
-            this.navigationManager.NavigateTo("/worklog/create");
-        }
-
-        private async Task<Maya.Ext.Unit> CreateInline(Model.Db.Worklog worklog)
-        {
-            var result = await this.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand(worklog));
-
-            if (result.IsFailure)
-            {
-                Console.WriteLine(result.Failure.Message);
-                await this.NotificationService.ShowError(result.Failure.Message);
-            }
-            // maybe reload
-            return Maya.Ext.Unit.Default;
-        }
-
-        private async Task<Maya.Ext.Unit> UpdateInline(Model.Db.Worklog worklog)
-        {
-            var result = await this.Mediator.Send(new CQRS.Worklogs.Commands.UpdateWorklogCommand(worklog, false));
-
-            if (result.IsFailure)
-            {
-                Console.WriteLine(result.Failure.Message);
-                await this.NotificationService.ShowError(result.Failure.Message);
-            }
-            // maybe reload
-            return Maya.Ext.Unit.Default;
-        }
-
-        private Maya.Ext.Unit Edit(long id)
-        {
-            this.navigationManager.NavigateTo($"/worklog/edit/{id}");
-            return Maya.Ext.Unit.Default;
-        }
-
-        private Maya.Ext.Unit PrepareDeletion(Model.Db.Worklog toBeDeleted)
-        {
-            this.worklogToBeDeleted = toBeDeleted;
-            return Maya.Ext.Unit.Default;
-        }
-
-        private async Task<Maya.Ext.Unit> Delete()
-        {
-            if (worklogToBeDeleted.Id == default(int))
-            {
-                await NotificationService.ShowError("Worklog is not defined.");
-                return Maya.Ext.Unit.Default;
-            }
-
-            return await Mediator.Send(new CQRS.Worklogs.Commands.DeleteCommand(this.worklogToBeDeleted))
-                .EitherAsync(
-                    async success =>
-                    {
-                        await NotificationService.ShowSuccess($"Successfully deleted the worklog.");
-                        worklogToBeDeleted = new();
-                        await Load();
-                        return unitResult.Succeeded(Maya.Ext.Unit.Default);
-                    },
-                    async failure =>
-                    {
-                        Console.WriteLine(failure.Message);
-                        await NotificationService.ShowError($"Failled to delete th worklog. Message: {failure.Message}");
-                        return unitResult.Failed(failure);
-                    }
-                ).ValueOrAsync(Maya.Ext.Unit.Default);
-        }
     }
 }

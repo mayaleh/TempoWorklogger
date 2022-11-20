@@ -1,0 +1,76 @@
+﻿@inherits BaseInlineManagedGridView<Model.Db.IntegrationSettings>
+
+
+<TempoWorklogger.UI.Dialogs.DialogView Identifier="deleteItemModal" Title="Confirm deleting item" ConfirmButtonText="Yes, I know what I am doing!" OnConfirmClicked="@(() => ViewModel.DeleteCommand.Execute())">
+    <Content>
+        <p>Do you realy want to delete this settings? This operation is permanent and will be deleted only on your local machine...</p>
+    </Content>
+</TempoWorklogger.UI.Dialogs.DialogView>
+
+<div class="row mb-2">
+    <div class="col-auto">
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="Add" Click="@InsertRow" Disabled=@(modelToInsert != null || modelToUpdate != null) />
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col-12">
+        <RadzenDataGrid @ref="modelGrid"
+                        Data="@ViewModel.IntegrationSettingsList"
+                        TItem="Model.Db.IntegrationSettings"
+                        AllowAlternatingRows="false"
+                        EditMode="DataGridEditMode.Multiple"
+                        AllowSorting="true"
+                        AllowMultiColumnSorting="true"
+                        AllowPaging="true"
+                        PageSize="25"
+                        AllowFiltering="true"
+                        RowUpdate="@OnUpdateRow"
+                        RowCreate="@OnCreateRow"
+                        AllowRowSelectOnRowClick="false">
+            <Columns>
+                <RadzenDataGridColumn TItem="Model.Db.IntegrationSettings" Property="@nameof(Model.Db.Worklog.Id)" Width="100px" Title="ID" />
+                <RadzenDataGridColumn TItem="Model.Db.IntegrationSettings" Property="@nameof(Model.Db.IntegrationSettings.Name)" Width="160px" Title="Name">
+                    <EditTemplate Context="integrationSetting">
+                        <RadzenTextBox @bind-Value="integrationSetting.Name" Name="Name" Style="width:100%" />
+                        <RadzenRequiredValidator Text="Name is required" Component="Name" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Model.Db.IntegrationSettings" Property="@nameof(Model.Db.IntegrationSettings.Endpoint)" Width="160px" Title="Endpoint">
+                    <EditTemplate Context="integrationSetting">
+                        <RadzenTextBox @bind-Value="integrationSetting.Endpoint" Name="Endpoint" Style="width:100%" />
+                        <RadzenRequiredValidator Text="Endpoint is required" Component="Endpoint" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Model.Db.IntegrationSettings" Property="@nameof(Model.Db.IntegrationSettings.AccessToken)" Width="160px" Title="API Access token">
+                    <EditTemplate Context="integrationSetting">
+                        <RadzenTextBox @bind-Value="integrationSetting.AccessToken" Name="AccessToken" Style="width:100%" />
+                        <RadzenRequiredValidator Text="API Access token is required" Component="AccessToken" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Model.Db.IntegrationSettings" Property="@nameof(Model.Db.IntegrationSettings.AuthorAccountId)" Width="160px" Title="Author account ID">
+                    <EditTemplate Context="integrationSetting">
+                        <RadzenTextBox @bind-Value="integrationSetting.AuthorAccountId" Name="AuthorAccountId" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn CssClass="ui-cell-menu" TItem="Model.Db.IntegrationSettings" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="200px">
+                    <Template Context="integrationSetting">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(integrationSetting))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(integrationSetting))">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="integrationSetting">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(integrationSetting))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@((args) => CancelEdit(integrationSetting))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>

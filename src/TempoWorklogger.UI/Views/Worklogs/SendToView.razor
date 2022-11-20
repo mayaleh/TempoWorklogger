@@ -1,0 +1,53 @@
+﻿<h3>Send to API</h3>
+
+@* TODO process and progress, pause and resume *@
+<div class="row mb-2">
+    <div class="col-auto">
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H4">Tempo setting</RadzenText>
+    </div>
+    <div class="col">
+        <RadzenDropDown AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        Placeholder="Select..." @bind-Value=selectedIntegrationSettings Data=@ViewModel.IntegrationSettingsList TextProperty="@nameof(Model.Db.IntegrationSettings.Name)" />
+    </div>
+    @if (ViewModel.SendSelectedToApiCommand.Executing)
+    {
+        <div class="col-auto">
+            @*<button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-pause"></i> Pause importing</button>*@
+        </div>
+    }
+    <div class="col-auto">
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="done" Text="Confirm and execute" Click=@(_ => ViewModel.SendSelectedToApiCommand.Execute(selectedIntegrationSettings!)) Disabled=@(this.selectedIntegrationSettings == null || ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any() || ViewModel.SendSelectedToApiCommand.Executing) />
+    </div>
+</div>
+
+@if (ViewModel.SendSelectedToApiCommand.Executing)
+{
+    <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
+        <TempoWorklogger.UI.Commons.ProgressBar ProcessMessage="Importing data from the file into local storage..." />
+    </CascadingValue>
+}
+
+<div class="row mb-2">
+    <div class="col-12">
+        <RadzenDataGrid Data="@ViewModel.SelectedWorklogs"
+                        TItem="Model.Db.Worklog"
+                        AllowAlternatingRows="false"
+                        AllowSorting="true"
+                        AllowMultiColumnSorting="true"
+                        AllowPaging="true"
+                        PageSize="50"
+                        AllowFiltering="true"
+                        IsLoading=ViewModel.SendSelectedToApiCommand.Executing>
+            <Columns>
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Width="100px" Title="ID" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Width="160px" Title="Issue" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Width="175px" Title="Started" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Width="175px" Title="Ended" />
+                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
+            </Columns>
+            <EmptyTemplate>
+                <h4 class="center my-2">No worklogs was selected...</h4>
+            </EmptyTemplate>
+        </RadzenDataGrid>
+    </div>
+</div>

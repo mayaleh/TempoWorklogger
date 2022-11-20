@@ -7,8 +7,6 @@ namespace TempoWorklogger.Library.Mapper.Db
 {
     public static class WorklogFromNPOI
     {
-        const int Zero = 0;
-
         public static Result<Worklog, (Exception Exception, int RowNr)> MapRowByImportToWorklog(this IRow row, ImportMap importMap)
         {
             try
@@ -34,7 +32,7 @@ namespace TempoWorklogger.Library.Mapper.Db
                 
                 FixStartEndDate(worklog);
                 
-                worklog.TimeSpentSeconds = CalculateTimeSpentSeconds(worklog.TimeSpentSeconds, worklog.StartTime, worklog.EndTime);
+                worklog.TimeSpentSeconds = WorklogHelper.CalculateTimeSpentSeconds(worklog.TimeSpentSeconds, worklog.StartTime, worklog.EndTime);
 
                 return Result<Worklog, (Exception, int)>.Succeeded(worklog);
             }
@@ -44,19 +42,9 @@ namespace TempoWorklogger.Library.Mapper.Db
             }
         }
 
-        private static int CalculateTimeSpentSeconds(int actualSeconds, DateTime startTime, DateTime endTime)
-        {
-            if (actualSeconds == Zero && startTime.Ticks != endTime.Ticks && endTime.Year != 0 && startTime.Year != 0)
-            {
-                return (int)(endTime - startTime).TotalSeconds;
-            }
-
-            return actualSeconds;
-        }
-
         private static void FixStartEndDate(Worklog worklog)
         {
-            if (worklog.EndTime.Year == 0 && worklog.StartTime.Year != 0)
+            if (worklog.EndTime.Year == CommonConstants.Zero && worklog.StartTime.Year != CommonConstants.Zero)
             {
                 worklog.EndTime = new DateTime(
                     worklog.StartTime.Year,
@@ -67,7 +55,7 @@ namespace TempoWorklogger.Library.Mapper.Db
                     worklog.EndTime.Second);
             }
 
-            if (worklog.StartTime.Year == 0 && worklog.EndTime.Year != 0)
+            if (worklog.StartTime.Year == CommonConstants.Zero && worklog.EndTime.Year != CommonConstants.Zero)
             {
                 worklog.StartTime = new DateTime(
                     worklog.EndTime.Year,

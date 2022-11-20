@@ -27,7 +27,7 @@
                     var columnDefinitions = await dbConnection.Table<ColumnDefinition>().Where(x => importMapIds.Contains(x.ImportMapId))
                         .ToListAsync();
                     
-                    foreach ( var importMap in importMaps) 
+                    foreach (var importMap in importMaps) 
                     {
                         importMap.ColumnDefinitions = columnDefinitions.Where(x => x.ImportMapId == importMap.Id)
                             .ToList();

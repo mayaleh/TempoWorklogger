@@ -5,5 +5,9 @@
         Task ShowError(string message);
 
         Task ShowSuccess(string message);
+        
+        Task ShowWarning(string message);
+
+        Task ShowInfo(string message);
     }
 }

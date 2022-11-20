@@ -1,6 +1,5 @@
 ﻿using Maya.Ext;
 using Maya.Ext.Func.Rop;
-using System.Collections;
 using TempoWorklogger.Contract.UI.ViewModels.Template;
 
 namespace TempoWorklogger.ViewModels.Template

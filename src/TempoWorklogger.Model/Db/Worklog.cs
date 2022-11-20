@@ -1,6 +1,5 @@
 ﻿using SQLite;
 using SQLiteNetExtensions.Attributes;
-using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.Model.Db
 {

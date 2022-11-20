@@ -13,6 +13,34 @@ namespace TempoWorklogger.UI.Core
             this.notificationService = notificationService;
         }
 
+        public Task ShowWarning(string message)
+        {
+            Console.WriteLine("{0} {1}", "Error", message);
+            notificationService.Notify(
+                new NotificationMessage
+                {
+                    Duration = duration,
+                    Detail = message,
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Warning"
+                });
+            return Task.CompletedTask;
+        }
+
+        public Task ShowInfo(string message)
+        {
+            Console.WriteLine("{0} {1}", "Error", message);
+            notificationService.Notify(
+                new NotificationMessage
+                {
+                    Duration = duration,
+                    Detail = message,
+                    Severity = NotificationSeverity.Info,
+                    Summary = "Information"
+                });
+            return Task.CompletedTask;
+        }
+
         public Task ShowError(string message)
         {
             Console.WriteLine("{0} {1}", "Error", message);

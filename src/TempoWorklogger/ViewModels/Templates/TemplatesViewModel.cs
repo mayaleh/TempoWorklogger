@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
-using System.Web;
 using TempoWorklogger.Contract.UI;
 using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Templates;

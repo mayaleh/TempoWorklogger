@@ -10,3 +10,4 @@ global using importMapResult = Maya.Ext.Rop.Result<TempoWorklogger.Model.Db.Impo
 global using importMapsResult = Maya.Ext.Rop.Result<System.Collections.Generic.IEnumerable<TempoWorklogger.Model.Db.ImportMap>, System.Exception>;
 global using worklogsResult = Maya.Ext.Rop.Result<System.Collections.Generic.IEnumerable<TempoWorklogger.Model.Db.Worklog>, System.Exception>;
 global using worklogResult = Maya.Ext.Rop.Result<TempoWorklogger.Model.Db.Worklog, System.Exception>;
+global using integrationSettingsResult = Maya.Ext.Rop.Result<System.Collections.Generic.IEnumerable<TempoWorklogger.Model.Db.IntegrationSettings>, System.Exception>;
