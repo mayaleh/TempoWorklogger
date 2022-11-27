@@ -1,15 +1,14 @@
 ﻿using Maya.Ext.Func.Rop;
-using Maya.Ext.Rop;
-using TempoWorklogger.Model.Tempo;
 
 namespace TempoWorklogger.ViewModels.Worklogs
 {
     using unitResult = Maya.Ext.Rop.Result<Maya.Ext.Unit, Exception>;
+    using tempoWorklogResponseResult = Maya.Ext.Rop.Result<Model.Tempo.WorklogResponse, System.Exception>;
     public class WorklogsActions
     {
         private readonly WorklogsViewModel vm;
 
-        private Model.Db.Worklog worklogToBeDeleted = new();
+        private Model.Db.WorklogView worklogToBeDeleted = new();
 
         private bool isSendToApiStopped = true;
 
@@ -28,7 +27,7 @@ namespace TempoWorklogger.ViewModels.Worklogs
 
         private async Task LoadWorklogs()
         {
-            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Queries.GetWorklogsQuery());
+            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Queries.GetWorklogsViewQuery());
 
             if (result.IsFailure)
             {
@@ -36,7 +35,11 @@ namespace TempoWorklogger.ViewModels.Worklogs
                 await this.vm.NotificationService.ShowError(result.Failure.Message);
             }
 
-            this.vm.Worklogs = result.Success?.ToList() ?? new List<Model.Db.Worklog>();
+            this.vm.Worklogs = result.Success?.ToList() ?? new List<Model.Db.WorklogView>();
+
+            var worklogsResult = await this.vm.Mediator.Send(new CQRS.Worklogs.Queries.GetWorklogsQuery());
+
+            this.vm.AutoCompleteWorklogs = worklogsResult.IsSuccess && worklogsResult.Success != null ? worklogsResult.Success.ToList() : new List<Model.Db.Worklog>();
         }
 
         private async Task LoadIntegrationSettings()
@@ -57,9 +60,9 @@ namespace TempoWorklogger.ViewModels.Worklogs
             this.vm.NavigationManager.NavigateTo("/worklog/create");
         }
 
-        public async Task<Maya.Ext.Unit> CreateInline(Model.Db.Worklog worklog)
+        public async Task<Maya.Ext.Unit> CreateInline(Model.Db.WorklogView worklog)
         {
-            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand(worklog));
+            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.CreateWorklogCommand((Model.Db.Worklog)worklog));
 
             if (result.IsFailure)
             {
@@ -73,9 +76,9 @@ namespace TempoWorklogger.ViewModels.Worklogs
             return Maya.Ext.Unit.Default;
         }
 
-        public async Task<Maya.Ext.Unit> UpdateInline(Model.Db.Worklog worklog)
+        public async Task<Maya.Ext.Unit> UpdateInline(Model.Db.WorklogView worklog)
         {
-            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.UpdateWorklogCommand(worklog, false));
+            var result = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.UpdateWorklogCommand((Model.Db.Worklog)worklog, false));
 
             if (result.IsFailure)
             {
@@ -95,7 +98,7 @@ namespace TempoWorklogger.ViewModels.Worklogs
             return Maya.Ext.Unit.Default;
         }
 
-        public Maya.Ext.Unit PrepareDeletion(Model.Db.Worklog toBeDeleted)
+        public Maya.Ext.Unit PrepareDeletion(Model.Db.WorklogView toBeDeleted)
         {
             this.worklogToBeDeleted = toBeDeleted;
             return Maya.Ext.Unit.Default;
@@ -110,7 +113,7 @@ namespace TempoWorklogger.ViewModels.Worklogs
                     await DeleteOneWorklog(item, false);
                 }
 
-                this.vm.SelectedWorklogs = new List<Model.Db.Worklog>();
+                this.vm.SelectedWorklogs = new List<Model.Db.WorklogView>();
 
                 return await Load();
             }
@@ -125,9 +128,9 @@ namespace TempoWorklogger.ViewModels.Worklogs
             return Maya.Ext.Unit.Default;
         }
 
-        public async Task DeleteOneWorklog(Model.Db.Worklog worklog, bool doResetAndReload = true)
+        public async Task DeleteOneWorklog(Model.Db.WorklogView worklog, bool doResetAndReload = true)
         {
-            await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.DeleteCommand(worklog))
+            await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.DeleteCommand((Model.Db.Worklog)worklog))
                 .EitherAsync(
                     async success =>
                     {
@@ -152,6 +155,12 @@ namespace TempoWorklogger.ViewModels.Worklogs
         {
             try
             {
+                if (isSendToApiStopped && isSendingStoppedManualy && this.vm.SentToTempoResults.Count < this.vm.SelectedWorklogs.Count)
+                {
+                    await this.vm.NotificationService.ShowWarning("Continuing sending to Tempo API after manual stop is not allowed. Sorry, but refresh is required.");
+                    return Maya.Ext.Unit.Default;
+                }
+
                 isSendToApiStopped = false;
                 if (this.vm.SelectedWorklogs == null || !this.vm.SelectedWorklogs.Any())
                 {
@@ -162,12 +171,12 @@ namespace TempoWorklogger.ViewModels.Worklogs
                 var total = this.vm.SelectedWorklogs.Count;
                 var itemNr = 0;
 
-                var importResults = new Dictionary<long, unitResult>(this.vm.SelectedWorklogs.Count); // TODO show results, move to VM state prop.
+                this.vm.SentToTempoResults = new Dictionary<long, tempoWorklogResponseResult>(this.vm.SelectedWorklogs.Count);
 
                 foreach (var item in this.vm.SelectedWorklogs)
                 {
                     // TODO pause, stop, skip progressed
-                    if (importResults.ContainsKey(item.Id))
+                    if (this.vm.SentToTempoResults.ContainsKey(item.Id))
                     {
                         continue; // Prevents sending already sent in this import seassion.
                     }
@@ -178,10 +187,11 @@ namespace TempoWorklogger.ViewModels.Worklogs
                         break;
                     }
 
-                    importResults[item.Id] = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.SendToTempoCommand(integrationSettings, item));
+                    this.vm.SentToTempoResults[item.Id] = await this.vm.Mediator.Send(new CQRS.Worklogs.Commands.SendToTempoCommand(integrationSettings, item));
 
                     itemNr++;
                     this.vm.OnProgressChanged?.Invoke(itemNr * 100 / total);
+                    this.vm.OnUiChanged.Invoke();
                 }
 
                 isSendToApiStopped = true;
@@ -198,6 +208,26 @@ namespace TempoWorklogger.ViewModels.Worklogs
                 isSendToApiStopped = true;
                 await this.vm.NotificationService.ShowInfo("Sending to Tempo API completed.");
             }
+        }
+
+        private bool isSendingStoppedManualy = false;
+
+        public void StopSendingToTempo()
+        {
+            isSendToApiStopped = true;
+            isSendingStoppedManualy = true;
+        }
+
+        public async Task<Maya.Ext.Unit> ResetSendToTempoData()
+        {
+            this.vm.SentToTempoResults = new Dictionary<long, tempoWorklogResponseResult>();
+
+            if (this.vm.SentToTempoResults.Count > 0)
+            {
+                await LoadWorklogs();
+            }
+
+            return Maya.Ext.Unit.Default;
         }
     }
 }

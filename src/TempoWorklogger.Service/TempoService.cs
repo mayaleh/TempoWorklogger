@@ -9,9 +9,9 @@ namespace TempoWorklogger.Service
     {
         public IWorklogService WorklogService { get; }
 
-        public TempoService(string accessToken)
+        public TempoService(IntegrationSettings integrationSettings)
         {
-            WorklogService = new WorklogService(accessToken);
+            WorklogService = new WorklogService(integrationSettings);
         }
     }
 
@@ -19,7 +19,7 @@ namespace TempoWorklogger.Service
     {
         public ITempoService CreateService(IntegrationSettings integrationSettings)
         {
-            return new TempoService(integrationSettings.AccessToken);
+            return new TempoService(integrationSettings);
         }
     }
 }

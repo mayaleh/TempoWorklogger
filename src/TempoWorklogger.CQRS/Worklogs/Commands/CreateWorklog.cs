@@ -33,7 +33,7 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
 
                 var insertedRowCountResult = await this.dbService.ExecuteAttemptWithRetry((CancellationToken cancellationToken) =>
                     {
-                        return dbConnection.InsertAsync(worklog);
+                        return dbConnection.InsertAsync(worklog, typeof(Worklog));
                     }, cancellationToken)
                     .MapAsync(async affectedRow =>
                     {

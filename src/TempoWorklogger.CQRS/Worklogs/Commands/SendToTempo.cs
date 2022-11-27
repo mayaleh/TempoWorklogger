@@ -1,11 +1,14 @@
 ﻿using Maya.Ext.Func.Rop;
+using System.Text.Json;
 using TempoWorklogger.Library.Mapper.Tempo;
 
 namespace TempoWorklogger.CQRS.Worklogs.Commands
 {
-    public record SendToTempoCommand(Model.Db.IntegrationSettings IntegrationSettings, Worklog Worklog) : IRequest<unitResult>;
+    using tempoWorklogResponseResult = Maya.Ext.Rop.Result<Model.Tempo.WorklogResponse, System.Exception>;
 
-    public class SendToTempoCommandHandler : IRequestHandler<SendToTempoCommand, unitResult>
+    public record SendToTempoCommand(Model.Db.IntegrationSettings IntegrationSettings, Worklog Worklog) : IRequest<tempoWorklogResponseResult>;
+
+    public class SendToTempoCommandHandler : IRequestHandler<SendToTempoCommand, tempoWorklogResponseResult>
     {
         private readonly IDbService dbService;
         private readonly ITempoServiceFactory tempoServiceFactory;
@@ -16,13 +19,12 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
             this.tempoServiceFactory = tempoServiceFactory;
         }
 
-        public async Task<unitResult> Handle(SendToTempoCommand request, CancellationToken cancellationToken)
+        public async Task<tempoWorklogResponseResult> Handle(SendToTempoCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var tempoService = tempoServiceFactory.CreateService(request.IntegrationSettings);
 
-                // Map DB.Worklog to Tempo.Worklog based on ImportMap and integration settings
                 var result = await request.Worklog.MapWorklogDbToWorklogTempo(request.IntegrationSettings)
                     .BindAsync(tempoWorklog =>
                     {
@@ -35,10 +37,11 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
                             request.Worklog.Id,
                             WorklogLogType.SendToTempoAttempt,
                             LogSeverity.Success,
-                            "Successfully sent to Tempo API.",
-                            cancellationToken);
-                    })
-                    .MapAsync(_ => Task.FromResult(Maya.Ext.Unit.Default));
+                            $"Successfully sent to Tempo API. Target: {request.IntegrationSettings.Name} - {request.IntegrationSettings.Endpoint}",
+                            JsonSerializer.Serialize(new WorklogLogSendToTempoData(request.Worklog, request.IntegrationSettings.Endpoint, tempoResult)),
+                            cancellationToken)
+                        .MapAsync(_ => Task.FromResult(tempoResult));
+                    });
 
                 if (result.IsFailure)
                 {
@@ -46,7 +49,8 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
                         request.Worklog.Id,
                         WorklogLogType.SendToTempoAttempt,
                         LogSeverity.Error,
-                        $"Failled to send to Tempo API. Message: {result.Failure.Message}",
+                        $"Failled to send to Tempo API. Message: {result.Failure.Message}; Target: {request.IntegrationSettings.Name} - {request.IntegrationSettings.Endpoint}",
+                        JsonSerializer.Serialize(new WorklogLogSendToTempoData(request.Worklog, request.IntegrationSettings.Endpoint, null)),
                         cancellationToken);
                 }
 
@@ -58,9 +62,10 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
                     request.Worklog.Id,
                     WorklogLogType.SendToTempoAttempt,
                     LogSeverity.Error,
-                    $"Failled to send to Tempo API. Message: {e.Message}",
+                    $"Failled to send to Tempo API. Message: {e.Message}; Target: {request.IntegrationSettings.Name} - {request.IntegrationSettings.Endpoint}",
+                    JsonSerializer.Serialize(new WorklogLogSendToTempoData(request.Worklog, request.IntegrationSettings.Endpoint, null)),
                     cancellationToken);
-                return unitResult.Failed(e);
+                return tempoWorklogResponseResult.Failed(e);
             }
         }
 
@@ -69,11 +74,11 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
             WorklogLogType logType,
             LogSeverity logSeverity,
             string message,
+            string? data,
             CancellationToken cancellationToken)
         {
             try
             {
-
                 var dbConnection = await this.dbService.GetConnection(cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
@@ -85,6 +90,7 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
                         Severity = logSeverity,
                         Type = logType,
                         Message = message,
+                        Data = data,
                         Created = DateTime.Now,
                     });
                 }, cancellationToken).ConfigureAwait(false);

@@ -1,4 +1,7 @@
 ﻿{
+  "ConnectionStrings": {
+    "DefaultConnectionString": "Data Source=tempo-worklogger-db-ef.db3"
+  },
   "App": {
     "DatabaseFileName": "tempo-worklogger-db.db3"
   }

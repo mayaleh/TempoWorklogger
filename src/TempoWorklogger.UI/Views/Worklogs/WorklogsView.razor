@@ -1,29 +1,10 @@
-﻿@*
-<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteItemModalLabel">Confirm deleting item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Do you realy want to delete the worklog? This operation is permanent and will be deleted only on your local machine...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" data-bs-dismiss="modal" @onclick="@(() => ViewModel.DeleteCommand.Execute())" class="btn btn-primary">Yes, I know what I am doing!</button>
-            </div>
-        </div>
-    </div>
-</div>*@
-
-<TempoWorklogger.UI.Dialogs.DialogView Identifier="deleteItemModal" Title="Confirm deleting item" ConfirmButtonText="Yes, I know what I am doing!" OnConfirmClicked="@(() => ViewModel.DeleteCommand.Execute())">
+﻿<TempoWorklogger.UI.Dialogs.DialogView Identifier="deleteItemModal" Title="Confirm deleting item" ConfirmButtonText="Yes, I know what I am doing!" OnConfirmClicked="@(() => ViewModel.DeleteCommand.Execute())">
     <Content>
         <p>Do you realy want to delete the worklog? This operation is permanent and will be deleted only on your local machine...</p>
     </Content>
 </TempoWorklogger.UI.Dialogs.DialogView>
 
-<TempoWorklogger.UI.Dialogs.DialogView Identifier="sendToTempoModal" Title="Send to tempo preview" Width="80%">
+<TempoWorklogger.UI.Dialogs.DialogView Identifier="sendToTempoModal" Title="Send to tempo preview" Width="80%" OnCancelClicked="@(() => ViewModel.ResetSendToTempoCommand.Execute())">
     <Content>
         <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Worklogs.IWorklogsViewModel))" Value="@ViewModel">
             <SendToView />
@@ -42,8 +23,8 @@
         <RadzenMenu>
             <RadzenMenuItem Text="More actions" Icon="line_weight">
                 <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="add_circle_outline" Text="Add detailed" Click="@ViewModel.CreateDetailedCommand.Execute" Disabled=@(worklogToInsert != null || worklogToUpdate != null)></RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" data-bs-toggle="modal" data-bs-target="#deleteItemModal" Text="Delete selected" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="backup" data-bs-toggle="modal" data-bs-target="#sendToTempoModal" Text="Send selected to Tempo API" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#deleteItemModal" Text="Delete selected" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="backup" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#sendToTempoModal" Text="Send selected to Tempo API" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
             </RadzenMenuItem>
         </RadzenMenu>
     </div>
@@ -55,7 +36,7 @@
     <div class="col-12">
         <RadzenDataGrid @ref="worklogsGrid"
                         Data="@ViewModel.Worklogs"
-                        TItem="Model.Db.Worklog"
+                        TItem="Model.Db.WorklogView"
                         AllowAlternatingRows="false"
                         EditMode="DataGridEditMode.Multiple"
                         AllowSorting="true"
@@ -69,7 +50,7 @@
                         @bind-Value=@ViewModel.SelectedWorklogs
                         SelectionMode="DataGridSelectionMode.Multiple">
             <Columns>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Width="60px" Sortable="false" Filterable="false">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Width="60px" Sortable="false" Filterable="false">
                     <HeaderTemplate>
                         <RadzenCheckBox TriState="false" TValue="bool" Value="@(ViewModel.Worklogs.Any(i => ViewModel.SelectedWorklogs != null && ViewModel.SelectedWorklogs.Contains(i)))"
                                         Change="@(args => ViewModel.SelectedWorklogs = args ? ViewModel.Worklogs : new() )" />
@@ -79,32 +60,49 @@
                                         TValue="bool" Change=@(args => worklogsGrid!.SelectRow(data)) />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Width="100px" Title="ID" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Width="160px" Title="Issue">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Id)" Width="75px" Title="ID" />
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.IssueKey)" Width="160px" Title="Issue">
                     <EditTemplate Context="worklog">
-                        <RadzenTextBox @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" />
+                        @*<RadzenTextBox @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" />*@
+                        <RadzenAutoComplete Context="context" @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.AutoCompleteWorklogs TextProperty="IssueKey">
+                            @*    <Template>
+                            @context.IssueKey - @context.Title
+                            </Template>*@
+                        </RadzenAutoComplete>
                         <RadzenRequiredValidator Text="Issue key is required" Component="IssueKey" Popup="true" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Width="175px" Title="Started">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Title)" Width="225px" Title="Title">
+                    <EditTemplate Context="worklog">
+                        <RadzenTextBox @bind-Value="worklog.Title" Name="Title" Style="width:100%" />
+                        @*<RadzenAutoComplete Context="context" @bind-Value="worklog.Title" Name="Title" Style="width:100%" Placeholder="Enter title key..." Data=@ViewModel.Worklogs TextProperty="Title">
+                            <Template>
+                            @context.IssueKey - @context.Title
+                            </Template>
+                        </RadzenAutoComplete>*@
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.StartTime)" Width="225px" Title="Started">
                     <EditTemplate Context="worklog">
                         <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style ="width:100%" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Width="175px" Title="Ended">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.EndTime)" Width="225px" Title="Ended">
                     <EditTemplate Context="worklog">
                         <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Description)" Title="Description">
                     <EditTemplate Context="worklog">
                         <RadzenTextArea @bind-Value="worklog.Description" Style="width:100%" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn CssClass="ui-cell-menu" TItem="Model.Db.Worklog" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="200px">
+                <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.WasSendToTempo)" Width="160px" Title="Sent to Tempo">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn CssClass="ui-cell-menu" TItem="Model.Db.WorklogView" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="200px">
                     <Template Context="worklog">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(worklog))" @onclick:stopPropagation="true"></RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))">
                         </RadzenButton>
                         <span> | </span>
                         <RadzenButton Shade="Shade.Lighter" Click=@(args => ViewModel.EditCommand.Execute(worklog.Id)) Icon="edit" title="Edit detail" ButtonStyle="ButtonStyle.Light" />
@@ -133,7 +131,7 @@
     <div class="col-auto">
         <span>Rows count per page:</span>
         <RadzenNumeric @bind-Value="rowsNumber" TValue="int" Change=@(args => worklogsGrid!.Reload()) />
-        <RadzenButton Icon="autorenew" ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Text="Reload" Size="ButtonSize.Medium" Class="my-1 ms-1" Click=@(args => worklogsGrid!.Reload())>
+        <RadzenButton Icon="autorenew" ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Text="Reload" Size="ButtonSize.Medium" Class="my-1 ms-1" Click=@(async args => await RefreshGrid())>
         </RadzenButton>
     </div>
 </div>

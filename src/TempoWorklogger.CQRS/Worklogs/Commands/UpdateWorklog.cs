@@ -26,7 +26,7 @@ namespace TempoWorklogger.CQRS.Worklogs.Commands
 
                 var updatedRowCount = await this.dbService.AttemptAndRetry((CancellationToken cancellationToken) =>
                 {
-                    return dbConnection.UpdateAsync(worklog);
+                    return dbConnection.UpdateAsync(worklog, typeof(Worklog));
                 }, cancellationToken).ConfigureAwait(false);
 
                 if (updatedRowCount > 0 && request.DoUpdateAttributes)

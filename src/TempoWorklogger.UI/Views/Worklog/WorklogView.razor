@@ -1,127 +1,150 @@
-﻿
-<div class="row align-items-center justify-content-center">
-    <div class=" col col-sm-11 col-md-9">
-        <div class="row mt-3 mb-2">
-            <div class="col">
-                <h5>Basic</h5>
-            </div>
-        </div>
+﻿<div class="row mb-3 mt-2">
+    <div class="col"></div>
+    <div class="col-auto">
+        <button class="btn btn-primary" type="button" disabled="@(!ViewModel.Commands.SaveCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.SaveCommand.Execute())">Save</button>
+    </div>
+</div>
 
-        <div class="row mb-2 mt-1">
-            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
-                <label for="@nameof(ViewModel.WorklogModel.IssueKey)Label" class="form-label">Worklog key</label>
-            </div>
-            <div class="col">
-                <input @bind="ViewModel.WorklogModel.IssueKey" type="text" class="form-control" id="@nameof(ViewModel.WorklogModel.IssueKey)Label" placeholder="for ex. my DEV-001">
-            </div>
-        </div>
+<RadzenTabs RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="Basic data">
+            <div class="row align-items-center justify-content-center">
+                <div class=" col col-sm-11 col-md-9">
+                    <div class="row mt-3 mb-2">
+                        <div class="col">
+                            <h5>Basic</h5>
+                        </div>
+                    </div>
 
-        <div class="row mb-2 mt-1">
-            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
-                <label for="@nameof(ViewModel.WorklogModel.Description)Label" class="form-label">Description</label>
-            </div>
-            <div class="col">
-                <input @bind="ViewModel.WorklogModel.Description" type="text" class="form-control" id="@nameof(ViewModel.WorklogModel.Description)Label" placeholder="Implementing some feature...">
-            </div>
-        </div>
-
-        <div class="row mb-2 mt-1">
-            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
-                <label for="@nameof(ViewModel.WorklogModel.StartTime)" class="form-label">Start time</label>
-            </div>
-            <div class="col">
-                <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=ViewModel.WorklogModel.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
-            </div>
-        </div>
-
-        <div class="row mb-2 mt-1">
-            <div class="col-auto col-sm-4 col-md-3 col-lg-2">
-                <label for="@nameof(ViewModel.WorklogModel.EndTime)" class="form-label">End time</label>
-            </div>
-            <div class="col">
-                <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=ViewModel.WorklogModel.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
-            </div>
-        </div>
-
-        @*Attrinbutes:*@
-        <div class="row mt-4 mb-2">
-            <div class="col">
-                <h5>Custom attributes</h5>
-            </div>
-            <div class="col-auto">
-                <RadzenButton Shade="Shade.Lighter" ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="Add attribute" Click="@InsertRow" Disabled=@(customAttributeToInsert != null || customAttributeToUpdate != null) />
-            </div>
-        </div>
-
-        @*@foreach (var attribute in ViewModel.WorklogModel.Attributes)
-        {
-            <div class="row mb-2">
-                <div class="col">
-                    <div class="row">
-                        <div class="col-auto">
-                            <label for="@(attribute.Key)Name" class="form-label">Name</label>
+                    <div class="row mb-2 mt-1">
+                        <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                            <label for="@nameof(ViewModel.WorklogModel.IssueKey)Label" class="form-label">Worklog key</label>
                         </div>
                         <div class="col">
-                            <input @bind="attribute.Key" type="text" class="form-control" id="@(attribute.Key)Name" placeholder="attribute name">
+                            <input @bind="ViewModel.WorklogModel.IssueKey" type="text" class="form-control" id="@nameof(ViewModel.WorklogModel.IssueKey)Label" placeholder="for ex. my DEV-001">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 mt-1">
+                        <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                            <label for="@nameof(ViewModel.WorklogModel.Title)Label" class="form-label">Title</label>
+                        </div>
+                        <div class="col">
+                            <input @bind="ViewModel.WorklogModel.Title" type="text" class="form-control" id="@nameof(ViewModel.WorklogModel.Title)Label" placeholder="Need some feature A...">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 mt-1">
+                        <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                            <label for="@nameof(ViewModel.WorklogModel.Description)Label" class="form-label">Description</label>
+                        </div>
+                        <div class="col">
+                            <input @bind="ViewModel.WorklogModel.Description" type="text" class="form-control" id="@nameof(ViewModel.WorklogModel.Description)Label" placeholder="Implementing some feature...">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 mt-1">
+                        <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                            <label for="@nameof(ViewModel.WorklogModel.StartTime)" class="form-label">Start time</label>
+                        </div>
+                        <div class="col">
+                            <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=ViewModel.WorklogModel.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 mt-1">
+                        <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                            <label for="@nameof(ViewModel.WorklogModel.EndTime)" class="form-label">End time</label>
+                        </div>
+                        <div class="col">
+                            <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=ViewModel.WorklogModel.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
                         </div>
                     </div>
                 </div>
+            </div>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Custom attributes">
+            <div class="row mt-2 mb-2">
                 <div class="col">
-                    <input @bind="attribute.Value" type="text" class="form-control" id="@(attribute.Value)Value" placeholder="attribute value" />
+                    <h5>Custom attributes</h5>
                 </div>
-
                 <div class="col-auto">
-                    <button title="remove attribute" disabled="@(!ViewModel.Commands.RemoveAttributeCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.RemoveAttributeCommand.Execute(attribute))" type="button" class="btn btn-outline-warning">X</button>
+                    <RadzenButton Shade="Shade.Lighter" ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="Add attribute" Click="@InsertRow" Disabled=@(customAttributeToInsert != null || customAttributeToUpdate != null) />
                 </div>
             </div>
-        }*@
-
-        <RadzenDataGrid @ref="customAttributesGrid"
-                        Data="@ViewModel.WorklogModel.Attributes"
-                        TItem="Model.Db.CustomAttributeKeyVal"
-                        AllowSorting="true"
-                        AllowMultiColumnSorting="true"
-                        AllowFiltering="true"
-                        AllowAlternatingRows="false"
-                        EditMode="DataGridEditMode.Single"
-                        RowUpdate="@OnUpdateRow"
-                        RowCreate="@OnCreateRow">
-            <Columns>
-                @*<RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Id)" Title="ID" />*@
-                <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Key)" Title="Name">
-                    <EditTemplate Context="customAttribute">
-                        <RadzenTextBox @bind-Value="customAttribute.Key" Style="width:100%; display: block" Name="AttributeName" />
-                        <RadzenRequiredValidator Text="Attribute Name is required" Component="AttributeName" Popup="true" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Value)" Title="Value">
-                    <EditTemplate Context="customAttribute">
-                        <RadzenTextBox @bind-Value="customAttribute.Value" Style="width:100%; display: block" Name="AttributeValue" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Context="data" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                    <Template Context="data">
-                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(data))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => DeleteRow(data))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                    </Template>
-                    <EditTemplate Context="data">
-                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(data))">
-                        </RadzenButton>
-                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@((args) => CancelEdit(data))">
-                        </RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => DeleteRow(data))">
-                        </RadzenButton>
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-
-        <div class="row mb-3 mt-2">
-            <div class="col">
-                <button class="btn btn-primary" type="button" disabled="@(!ViewModel.Commands.SaveCommand.CanExecute)" @onclick="@(async () => await ViewModel.Commands.SaveCommand.Execute())">Save</button>
+            <div class="row">
+                <div class="col-12">
+                    <RadzenDataGrid @ref="customAttributesGrid"
+                                    Data="@ViewModel.WorklogModel.Attributes"
+                                    TItem="Model.Db.CustomAttributeKeyVal"
+                                    AllowSorting="true"
+                                    AllowMultiColumnSorting="true"
+                                    AllowFiltering="true"
+                                    AllowAlternatingRows="false"
+                                    EditMode="DataGridEditMode.Single"
+                                    RowUpdate="@OnUpdateRow"
+                                    RowCreate="@OnCreateRow">
+                        <Columns>
+                            @*<RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Id)" Title="ID" />*@
+                            <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Key)" Title="Name">
+                                <EditTemplate Context="customAttribute">
+                                    <RadzenTextBox @bind-Value="customAttribute.Key" Style="width:100%; display: block" Name="AttributeName" />
+                                    <RadzenRequiredValidator Text="Attribute Name is required" Component="AttributeName" Popup="true" />
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Property="@nameof(Model.Db.CustomAttributeKeyVal.Value)" Title="Value">
+                                <EditTemplate Context="customAttribute">
+                                    <RadzenTextBox @bind-Value="customAttribute.Value" Style="width:100%; display: block" Name="AttributeValue" />
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.CustomAttributeKeyVal" Context="data" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                                <Template Context="data">
+                                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(data))" @onclick:stopPropagation="true">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => DeleteRow(data))" @onclick:stopPropagation="true">
+                                    </RadzenButton>
+                                </Template>
+                                <EditTemplate Context="data">
+                                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(data))">
+                                    </RadzenButton>
+                                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@((args) => CancelEdit(data))">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => DeleteRow(data))">
+                                    </RadzenButton>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Logs">
+            <div class="row mt-2 mb-2">
+                <div class="col">
+                    <h5>Logs</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+
+                    <RadzenDataGrid Data="@ViewModel.WorklogModel.Logs"
+                                    TItem="Model.Db.WorklogLog"
+                                    AllowSorting="true"
+                                    AllowMultiColumnSorting="true"
+                                    AllowFiltering="true"
+                                    AllowAlternatingRows="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogLog" Property="@nameof(Model.Db.WorklogLog.Created)" Width="175px" Title="Created at"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogLog" Property="@nameof(Model.Db.WorklogLog.Type)" Width="160px" Title="Type"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogLog" Property="@nameof(Model.Db.WorklogLog.Severity)" Width="130px" Title="Severity"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogLog" Property="@nameof(Model.Db.WorklogLog.Message)" Title="Message"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogLog" Property="@nameof(Model.Db.WorklogLog.Data)" Title="Data"></RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </div>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
+

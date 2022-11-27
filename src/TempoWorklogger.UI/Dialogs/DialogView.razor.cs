@@ -15,7 +15,7 @@ namespace TempoWorklogger.UI.Dialogs
         public EventCallback<MouseEventArgs> OnConfirmClicked { get; set; }
 
         [Parameter]
-        public EventCallback<MouseEventArgs>? OnCancelClicked { get; set; }
+        public EventCallback<MouseEventArgs> OnCancelClicked { get; set; }
 
         [Parameter]
         public string Width { get; set; } = "500px";
@@ -38,9 +38,9 @@ namespace TempoWorklogger.UI.Dialogs
         private async Task DefaultCancelClicked(MouseEventArgs args) 
         {
             System.Console.WriteLine($"Dialog {Identifier}: Cancel clicked.");
-            if (OnCancelClicked != null)
+            if (OnCancelClicked.HasDelegate)
             {
-                await OnCancelClicked.Value.InvokeAsync(args);
+                await OnCancelClicked.InvokeAsync(args);
             }
         }
     }

@@ -12,7 +12,7 @@
 		<EnableDefaultCssItems>false</EnableDefaultCssItems>
 
 		<!-- Display name -->
-		<ApplicationTitle>TempoWorklogger</ApplicationTitle>
+		<ApplicationTitle>SM Worklogger</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.mayaleh.tempoworklogger</ApplicationId>
@@ -31,6 +31,13 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.22621.0</TargetPlatformMinVersion>
 		<Authors>Salim Mayaleh</Authors>
 		<Company>Salim Mayaleh</Company>
+		<Description>Worklogs collector local-first app. Includes some integrations like Tempo API.</Description>
+		<Copyright></Copyright>
+		<PackageProjectUrl>https://mayaleh.github.io/TempoWorklogger/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/mayaleh/TempoWorklogger</RepositoryUrl>
+		<PackageCertificateThumbprint>F41A3780774A79039B4D227F55BC0BAB9755565D</PackageCertificateThumbprint>
+		<PackageCertificateKeyFile>TempoWorklogger_TemporaryKey.pfx</PackageCertificateKeyFile>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="$(TargetFramework.Contains('-windows')) and '$(Configuration)' == 'Release'">
@@ -38,7 +45,7 @@
 		<AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
 		<PackageCertificateThumbprint>E5BBE8A886578D4E91FD41A987C5C48869020D25</PackageCertificateThumbprint>
 	</PropertyGroup>
-	
+		
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />

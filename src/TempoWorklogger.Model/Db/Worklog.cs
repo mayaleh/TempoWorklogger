@@ -9,12 +9,6 @@ namespace TempoWorklogger.Model.Db
         public long Id { get; set; }
 
         /// <summary>
-        /// Jira Account ID of the author, maybe should be part of Integration setting model
-        /// </summary>
-        //[MaxLength(378)]
-        //public string? AuthorAccountId { get; set; }
-
-        /// <summary>
         /// Worklog description
         /// </summary>
         [MaxLength(378)]
@@ -25,6 +19,9 @@ namespace TempoWorklogger.Model.Db
         /// </summary>
         [MaxLength(255)]
         public string? IssueKey { get; set; }
+
+        [MaxLength(360)]
+        public string? Title { get; set; }
 
         [Ignore]
         public DateTime StartDate { get => StartTime.Date; }
@@ -51,5 +48,10 @@ namespace TempoWorklogger.Model.Db
             duplicatesOf.Logs = new List<WorklogLog>();
             return duplicatesOf;
         }
+    }
+
+    public class WorklogView : Worklog
+    {
+        public bool WasSendToTempo { get; set; }
     }
 }

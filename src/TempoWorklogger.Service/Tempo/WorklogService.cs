@@ -6,7 +6,7 @@ namespace TempoWorklogger.Service.Tempo
 {
     public class WorklogService : BaseTempoApiService, IWorklogService
     {
-        public WorklogService(string accessToken) : base(accessToken)
+        public WorklogService(Model.Db.IntegrationSettings integrationSettings) : base(integrationSettings)
         {
         }
 

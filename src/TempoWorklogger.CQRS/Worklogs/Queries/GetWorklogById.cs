@@ -38,6 +38,15 @@
 
                 data.Attributes = attributes;
 
+                var logs = await this.dbService.AttemptAndRetry(async (CancellationToken cancellationToken) =>
+                {
+                    return await dbConnection.Table<WorklogLog>()
+                        .Where(a => a.WorklogId == request.Id)
+                        .ToListAsync(/*, cancellationToken*/);
+                }, cancellationToken).ConfigureAwait(false);
+
+                data.Logs = logs;
+
                 return worklogResult.Succeeded(data);
             }
             catch (Exception e)

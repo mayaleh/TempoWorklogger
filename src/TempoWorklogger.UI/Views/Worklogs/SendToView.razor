@@ -1,53 +1,137 @@
-﻿<h3>Send to API</h3>
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
+<h3>Send to API</h3>
 
 @* TODO process and progress, pause and resume *@
 <div class="row mb-2">
     <div class="col-auto">
-        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H4">Tempo setting</RadzenText>
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H4">Tempo settings</RadzenText>
     </div>
-    <div class="col">
-        <RadzenDropDown AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
-                        Placeholder="Select..." @bind-Value=selectedIntegrationSettings Data=@ViewModel.IntegrationSettingsList TextProperty="@nameof(Model.Db.IntegrationSettings.Name)" />
-    </div>
-    @if (ViewModel.SendSelectedToApiCommand.Executing)
+
+    @if (ViewModel.SentToTempoResults.Count <= 0)
     {
+        <div class="col">
+            <RadzenDropDown AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                            Placeholder="Select..." @bind-Value=selectedIntegrationSettings Data=@ViewModel.IntegrationSettingsList TextProperty="@nameof(Model.Db.IntegrationSettings.Name)" />
+        </div>
         <div class="col-auto">
-            @*<button class="btn btn-outline-danger" @onclick="OnStopImportClicked"><i class="fa-solid fa-pause"></i> Pause importing</button>*@
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="done" Text="Confirm and execute" Click=@(async _ => await ConfirmAndExecuteClicked()) Disabled=@(this.selectedIntegrationSettings == null || ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any() || ViewModel.SendSelectedToApiCommand.Executing) />
         </div>
     }
-    <div class="col-auto">
-        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="done" Text="Confirm and execute" Click=@(_ => ViewModel.SendSelectedToApiCommand.Execute(selectedIntegrationSettings!)) Disabled=@(this.selectedIntegrationSettings == null || ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any() || ViewModel.SendSelectedToApiCommand.Executing) />
-    </div>
+
+    @if (ViewModel.SendSelectedToApiCommand.Executing || ViewModel.SentToTempoResults.Count > 0)
+    {
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H4">@selectedIntegrationSettings?.Name @selectedIntegrationSettings?.Endpoint</RadzenText>
+        </div>
+        @if (ViewModel.SendSelectedToApiCommand.Executing)
+        {
+            <div class="col-auto">
+                <RadzenButton ButtonStyle="ButtonStyle.Warning" Icon="stop" Text="Stop sending" Click=@(_ => ViewModel.StopSendingSelectedToApiCommand.Execute()) />
+            </div>
+        }
+    }
+
 </div>
 
 @if (ViewModel.SendSelectedToApiCommand.Executing)
 {
-    <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
-        <TempoWorklogger.UI.Commons.ProgressBar ProcessMessage="Importing data from the file into local storage..." />
-    </CascadingValue>
+    <div class="mb-2">
+        <CascadingValue Name="@(nameof(TempoWorklogger.Contract.UI.ViewModels.Common.IProgressViewModel))" Value="@ViewModel">
+            <TempoWorklogger.UI.Commons.ProgressBar ProcessMessage="Importing data from the file into local storage..." />
+        </CascadingValue>
+    </div>
 }
 
-<div class="row mb-2">
-    <div class="col-12">
-        <RadzenDataGrid Data="@ViewModel.SelectedWorklogs"
-                        TItem="Model.Db.Worklog"
-                        AllowAlternatingRows="false"
-                        AllowSorting="true"
-                        AllowMultiColumnSorting="true"
-                        AllowPaging="true"
-                        PageSize="50"
-                        AllowFiltering="true"
-                        IsLoading=ViewModel.SendSelectedToApiCommand.Executing>
-            <Columns>
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Id)" Width="100px" Title="ID" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.IssueKey)" Width="160px" Title="Issue" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.StartTime)" Width="175px" Title="Started" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.EndTime)" Width="175px" Title="Ended" />
-                <RadzenDataGridColumn TItem="Model.Db.Worklog" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
-            </Columns>
-            <EmptyTemplate>
-                <h4 class="center my-2">No worklogs was selected...</h4>
-            </EmptyTemplate>
-        </RadzenDataGrid>
+@if (ViewModel.SelectedWorklogs!.Any(x => x.WasSendToTempo))
+{
+    <div class="row mb-2">
+        <div class="col-12">
+            <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter">
+                Some worklogs has been already sent to Tempo API! See the colored rows.
+            </RadzenAlert>
+        </div>
     </div>
-</div>
+}
+
+<RadzenTabs RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="Selected data">
+            <div class="row mb-2">
+                <div class="col-12">
+                    <RadzenDataGrid Data="@ViewModel.SelectedWorklogs"
+                                    TItem="Model.Db.WorklogView"
+                                    AllowAlternatingRows="false"
+                                    AllowSorting="true"
+                                    AllowMultiColumnSorting="true"
+                                    AllowPaging="true"
+                                    PageSize="50"
+                                    AllowFiltering="true"
+                                    IsLoading=ViewModel.SendSelectedToApiCommand.Executing
+                                    RowRender="@RowRender">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.Worklog.Id)" Width="100px" Title="ID" />
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.Worklog.IssueKey)" Width="160px" Title="Issue" />
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.Worklog.StartTime)" Width="175px" Title="Started" />
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.Worklog.EndTime)" Width="175px" Title="Ended" />
+                            <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.Worklog.Description)" Title="Description" />
+                        </Columns>
+                        <EmptyTemplate>
+                            <h4 class="center my-2">No worklogs was selected...</h4>
+                        </EmptyTemplate>
+                    </RadzenDataGrid>
+                </div>
+            </div>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Results" Selected=isResultsTabSelected Style="@(ViewModel.SentToTempoResults.Count > 0 ? "background-color: #FCFCE3" : string.Empty)">
+
+            <div class="row mb-2">
+                <div class="col-12">
+                    @if (ViewModel.SentToTempoResults.Count <= 0)
+                    {
+                        <p>No results available...</p>
+                    }
+
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr class="cells-positions">
+                                <td scope="col">@(nameof(Model.Tempo.WorklogResponse.createdAt))</td>
+                                <td scope="col">@(nameof(Model.Tempo.WorklogResponse.tempoWorklogId))</td>
+                                <td scope="col">@(nameof(Model.Tempo.WorklogResponse.jiraWorklogId))</td>
+                                <td scope="col">@(nameof(Model.Tempo.WorklogResponse.self))</td>
+                                <td scope="col">@(nameof(Model.Tempo.WorklogResponse.issue))</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <Virtualize Items="@ViewModel.SentToTempoResults" Context="worklogResponseResult">
+                                @if (worklogResponseResult.Value.IsFailure)
+                                {
+                                    var failledWorklog = ViewModel.SelectedWorklogs!.Single(x => x.Id == worklogResponseResult.Key);
+                                    <tr class="bg-danger">
+                                        <td colspan="5">
+                                            For worklog:@(failledWorklog.IssueKey)
+                                            @(failledWorklog.StartDate)
+                                            @(failledWorklog.StartTime)
+                                            @(failledWorklog.Description)
+                                            Error: @(worklogResponseResult.Value.Failure.Message)
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (worklogResponseResult.Value.IsSuccess)
+                                {
+                                    <tr>
+                                        <td>@(worklogResponseResult.Value.Success.createdAt)</td>
+                                        <td>@(worklogResponseResult.Value.Success.tempoWorklogId)</td>
+                                        <td>@(worklogResponseResult.Value.Success.jiraWorklogId)</td>
+                                        <td>@(worklogResponseResult.Value.Success.self)</td>
+                                        <td><a href="@(worklogResponseResult.Value.Success.issue?.self)">@(worklogResponseResult.Value.Success.issue?.self)</a></td>
+                                    </tr>
+                                }
+                            </Virtualize>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>

@@ -1,4 +1,5 @@
 ﻿using Maya.Ext.Rop;
+using TempoWorklogger.Library.Helper;
 using TempoWorklogger.Model.Db;
 using WorklogDb = TempoWorklogger.Model.Db.Worklog;
 using WorklogTempo = TempoWorklogger.Model.Tempo.Worklog;
@@ -19,10 +20,9 @@ namespace TempoWorklogger.Library.Mapper.Tempo
                     AuthorAccountId = integrationSettings.AuthorAccountId,
                     StartDate = DateOnly.FromDateTime(worklogDb.StartDate),
                     StartTime = TimeOnly.FromDateTime(worklogDb.StartTime),
-                    TimeSpentSeconds = worklogDb.TimeSpentSeconds,
+                    TimeSpentSeconds = WorklogHelper.CalculateTimeSpentSeconds(worklogDb.TimeSpentSeconds, worklogDb.StartTime, worklogDb.EndTime),
                     Attributes = worklogDb.Attributes.Select(x => x.MapAttributeDbByToTempo()).ToList()
                 };
-
                 return worklogResult.Succeeded(tempoWorklog);
             }
             catch (Exception e)

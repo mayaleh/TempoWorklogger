@@ -16,6 +16,8 @@ namespace TempoWorklogger.Model.Db
 
         [MaxLength(378)]
         public string? Message { get; set; }
+        
+        public string? Data { get; set; }
 
         [ForeignKey(typeof(Worklog))]
         public long WorklogId { get; set; }
@@ -23,4 +25,6 @@ namespace TempoWorklogger.Model.Db
         [ManyToOne]
         public Worklog Worklog { get; set; } = null!;
     }
+
+    public record WorklogLogSendToTempoData(Worklog OriginalData, string Endpoint, Model.Tempo.WorklogResponse? Response);
 }
