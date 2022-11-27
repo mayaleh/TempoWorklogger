@@ -22,9 +22,9 @@
     <div class="col-auto">
         <RadzenMenu>
             <RadzenMenuItem Text="More actions" Icon="line_weight">
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="add_circle_outline" Text="Add detailed" Click="@ViewModel.CreateDetailedCommand.Execute" Disabled=@(worklogToInsert != null || worklogToUpdate != null)></RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#deleteItemModal" Text="Delete selected" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="backup" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#sendToTempoModal" Text="Send selected to Tempo API" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" class="mb-1" Icon="add_circle_outline" Text="Add detailed" Click="@ViewModel.CreateDetailedCommand.Execute" Disabled=@(worklogToInsert != null || worklogToUpdate != null)></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" class="mb-1" Icon="delete" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#deleteItemModal" Text="Delete selected" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="backup" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#sendToTempoModal" Text="Send selected to Tempo API" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
             </RadzenMenuItem>
         </RadzenMenu>
     </div>
@@ -102,7 +102,7 @@
                 <RadzenDataGridColumn CssClass="ui-cell-menu" TItem="Model.Db.WorklogView" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="200px">
                     <Template Context="worklog">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(worklog))" @onclick:stopPropagation="true"></RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-backdrop="static" data-keyboard="false" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))">
                         </RadzenButton>
                         <span> | </span>
                         <RadzenButton Shade="Shade.Lighter" Click=@(args => ViewModel.EditCommand.Execute(worklog.Id)) Icon="edit" title="Edit detail" ButtonStyle="ButtonStyle.Light" />
