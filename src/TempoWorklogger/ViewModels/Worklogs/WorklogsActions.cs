@@ -73,6 +73,8 @@ namespace TempoWorklogger.ViewModels.Worklogs
 
             this.vm.Worklogs.Add(worklog);
 
+            await Load();
+
             return Maya.Ext.Unit.Default;
         }
 
@@ -195,6 +197,8 @@ namespace TempoWorklogger.ViewModels.Worklogs
                 }
 
                 isSendToApiStopped = true;
+
+                await Load();
 
                 return Maya.Ext.Unit.Default;
             }

@@ -1,0 +1,175 @@
+﻿<TempoWorklogger.UI.Dialogs.DialogView Identifier="draftWorklogModal"
+                                       Title="Draft worklog"
+                                       Width="80%"
+                                       OnCancelClicked="@(_ => ResetDraftWorklog())"
+                                       OnConfirmClicked="@(_ => CreateDraftWorkLog())"
+                                       ConfirmButtonText="Create draft">
+    <Content>
+        <div class="row align-items-center justify-content-center">
+            <div class=" col col-sm-11 col-md-9">
+                <div class="row mt-3 mb-2">
+                    <div class="col">
+                        <h5>Basic</h5>
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.IssueKey)Label" class="form-label">Worklog key</label>
+                    </div>
+                    <div class="col">
+                        <RadzenAutoComplete Context="context" @bind-Value="WorklogDraft.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.Worklogs TextProperty="Key" />
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.Title)Label" class="form-label">Title</label>
+                    </div>
+                    <div class="col">
+                        <RadzenAutoComplete Context="context" @bind-Value="WorklogDraft.Title" Name="Title" Style="width:100%" Placeholder="Enter title..." Data=@WorklogsBySelectedIssue TextProperty="Title" />
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.Description)Label" class="form-label">Description</label>
+                    </div>
+                    <div class="col">
+                        <RadzenAutoComplete Context="context" @bind-Value="WorklogDraft.Description" Name="Description" Style="width:100%" Placeholder="Enter description..." Data=@WorklogsBySelectedIssue TextProperty="Description" />
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.StartTime)" class="form-label">Start time</label>
+                    </div>
+                    <div class="col">
+                        <RadzenDatePicker ShowTime="true" C HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
+                            <FooterTemplate>
+                                <RadzenButton Class="my-3 w-100" Click=@(_ => { WorklogDraft.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.EndTime)" class="form-label">End time</label>
+                    </div>
+                    <div class="col">
+                        <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
+                            <FooterTemplate>
+                                <RadzenButton Class="my-3 w-100" Click=@(_ => { WorklogDraft.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Content>
+    <ButtonsContent>
+        <RadzenButton data-bs-dismiss="modal" Click=@(async _ => await CreateDraftWorkLog()) Text="Create draft" />
+    </ButtonsContent>
+</TempoWorklogger.UI.Dialogs.DialogView>
+
+<TempoWorklogger.UI.Dialogs.DialogView Identifier="completeWorklogModal"
+                                       Title="Draft worklog"
+                                       Width="80%"
+                                       OnCancelClicked="@(_ => ResetDraftWorklog())"
+                                       OnConfirmClicked="@(async _ => await CreateWorklogFromDraft())"
+                                       ConfirmButtonText="Complete draft">
+    <Content>
+        <div class="row align-items-center justify-content-center">
+            <div class=" col col-sm-11 col-md-9">
+                <div class="row mt-3 mb-2">
+                    <div class="col">
+                        <h5>Complete wotklog</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        @WorklogDraft.IssueKey - @WorklogDraft.Title
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.StartTime)" class="form-label">Start time</label>
+                    </div>
+                    <div class="col">
+                        <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.EndTime)" class="form-label">End time</label>
+                    </div>
+                    <div class="col">
+                        <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100" />
+                    </div>
+                </div>
+
+                <div class="row mb-2 mt-1">
+                    <div class="col-auto col-sm-4 col-md-3 col-lg-2">
+                        <label for="@nameof(WorklogDraft.Description)Label" class="form-label">Description</label>
+                    </div>
+                    <div class="col">
+                        <RadzenAutoComplete Context="context" @bind-Value="WorklogDraft.Description" Name="Description" Style="width:100%" Placeholder="Enter description..." Data=@WorklogsBySelectedIssue TextProperty="Description" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Content>
+</TempoWorklogger.UI.Dialogs.DialogView>
+
+<RadzenPanel AllowCollapse="true">
+    <HeaderTemplate>
+        <h4 class="m-0 d-flex align-items-center">
+            Draft worklogs
+        </h4>
+    </HeaderTemplate>
+    <ChildContent>
+        <div class="row mt-2 mb-2">
+            <div class="col">
+                <RadzenButton Text="Create draft worklog" ButtonStyle="ButtonStyle.Info" Icon="plus" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#draftWorklogModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium"></RadzenButton>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-12">
+                <RadzenDataGrid @ref=worklogsGrid
+                                Data="@ViewModel.DraftWorklogs"
+                                TItem="Model.UI.WorklogDraft"
+                                AllowSorting="true"
+                                AllowMultiColumnSorting="true"
+                                AllowPaging="true"
+                                PageSize="25"
+                                AllowFiltering="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Model.UI.WorklogDraft" Property="@nameof(Model.UI.WorklogDraft.IssueKey)" Width="160px" Title="Issue" />
+                        <RadzenDataGridColumn TItem="Model.UI.WorklogDraft" Property="@nameof(Model.UI.WorklogDraft.Title)" Width="225px" Title="Title" />
+                        <RadzenDataGridColumn TItem="Model.UI.WorklogDraft" Property="@nameof(Model.UI.WorklogDraft.StartTime)" Width="225px" Title="Started" />
+                        <RadzenDataGridColumn TItem="Model.UI.WorklogDraft" Property="@nameof(Model.UI.WorklogDraft.EndTime)" Width="225px" Title="Ended" />
+                        <RadzenDataGridColumn TItem="Model.UI.WorklogDraft" Property="@nameof(Model.UI.WorklogDraft.Description)" Title="Description" />
+                        <RadzenDataGridColumn CssClass="ui-cell-menu" TItem="Model.UI.WorklogDraft" Title="#" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="200px">
+                            <Template Context="worklog">
+                                <RadzenButton Click="@(args => PrepareCompleteDraft(worklog))" ButtonStyle="ButtonStyle.Success" Icon="done" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#completeWorklogModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium"></RadzenButton>
+
+                                @*TODO complete, edit, remove*@
+                                @* Model
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#deleteItemModal" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" Class="my-1 ms-1" Click="@(args => ViewModel.PrepareDeleteCommand.Execute(worklog))"></RadzenButton>*@
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+        </div>
+    </ChildContent>
+    <SummaryTemplate>
+        <RadzenCard class="mt-3">
+            <b>@ViewModel.DraftWorklogs.Count() drafts; Time: @TotalDraftTime</b>
+        </RadzenCard>
+    </SummaryTemplate>
+</RadzenPanel>
+

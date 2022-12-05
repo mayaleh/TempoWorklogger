@@ -53,7 +53,7 @@
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Width="60px" Sortable="false" Filterable="false">
                     <HeaderTemplate>
                         <RadzenCheckBox TriState="false" TValue="bool" Value="@(ViewModel.Worklogs.Any(i => ViewModel.SelectedWorklogs != null && ViewModel.SelectedWorklogs.Contains(i)))"
-                                        Change="@(args => ViewModel.SelectedWorklogs = args ? ViewModel.Worklogs : new() )" />
+                                        Change="@(args => ViewModel.SelectedWorklogs = args ? worklogsGrid!.View.ToList() : new() )" />
                     </HeaderTemplate>
                     <Template Context="data">
                         <RadzenCheckBox TriState="false" Value="@(ViewModel.SelectedWorklogs != null && ViewModel.SelectedWorklogs.Contains(data))"
@@ -84,12 +84,20 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.StartTime)" Width="225px" Title="Started">
                     <EditTemplate Context="worklog">
-                        <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style ="width:100%" />
+                        <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style="width:100%">
+                            <FooterTemplate>
+                                <RadzenButton Class="my-3 w-100" Click=@(_ => { worklog.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
                     </EditTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.EndTime)" Width="225px" Title="Ended">
                     <EditTemplate Context="worklog">
-                        <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%" />
+                        <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%">
+                            <FooterTemplate>
+                                <RadzenButton Class="my-3 w-100" Click=@(_ => { worklog.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
                     </EditTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Description)" Title="Description">
