@@ -63,14 +63,10 @@ namespace TempoWorklogger.UI.Views.HomePage
         private void OnIssueKeyChanged(object value)
         {
             var issueKey = (string?)value;
-            if (string.IsNullOrEmpty(issueKey))
-            {
-                WorklogsBySelectedIssue = new();
-                return;
-            }
 
-            if (ViewModel.Worklogs.TryGetValue(issueKey, out var worklogs))
+            if (string.IsNullOrEmpty(issueKey) == false && ViewModel.Worklogs.TryGetValue(issueKey, out var worklogs))
             {
+                WorklogDraft.IssueKey = worklogs.First().IssueKey;
                 WorklogsBySelectedIssue = worklogs;
                 var firstW = worklogs.FirstOrDefault();
                 WorklogDraft.Title = firstW?.Title;
@@ -78,8 +74,8 @@ namespace TempoWorklogger.UI.Views.HomePage
                 return;
             }
 
+            WorklogDraft.IssueKey = null;
             WorklogsBySelectedIssue = new();
-            return;
         }
     }
 }

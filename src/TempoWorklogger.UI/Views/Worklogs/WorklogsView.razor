@@ -15,7 +15,7 @@
     </ButtonsContent>
 </TempoWorklogger.UI.Dialogs.DialogView>
 
-<div class="row mb-2">
+<div class="row mb-2 mt-2">
     <div class="col-auto">
         <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="Add simplified" Click="@InsertRow" Disabled=@(worklogToInsert != null || worklogToUpdate != null) />
     </div>
@@ -27,6 +27,10 @@
                 <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="backup" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-target="#sendToTempoModal" Text="Send selected to Tempo API" Disabled=@(ViewModel.SelectedWorklogs == null || !ViewModel.SelectedWorklogs.Any())></RadzenButton>
             </RadzenMenuItem>
         </RadzenMenu>
+    </div>
+    <div class="col"></div>
+    <div class="col-auto">
+        <strong>Total time: @TotalGridTime</strong>
     </div>
 </div>
 

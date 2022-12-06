@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Radzen;
 using Radzen.Blazor;
+using System.Text.Json;
 using TempoWorklogger.Contract.UI.ViewModels.Worklogs;
 
 namespace TempoWorklogger.UI.Views.Worklogs
@@ -26,10 +27,50 @@ namespace TempoWorklogger.UI.Views.Worklogs
         //    ViewModel.SelectedWorklogs.Remove(worklog);
         //}
 
+        //@bind-Settings="@Settings"
+        //DataGridSettings _settings;
+        //public DataGridSettings Settings
+        //{
+        //    get
+        //    {
+        //        return _settings;
+        //    }
+        //    set
+        //    {
+        //        if (_settings != value)
+        //        {
+        //            _settings = value;
+        //            InvokeAsync(SaveStateAsync);
+        //        }
+        //    }
+        //}
+
+        //string gridSettingState;
+
+        //private Task SaveStateAsync()
+        //{
+        //    gridSettingState = JsonSerializer.Serialize<DataGridSettings>(Settings);
+        //    return Task.CompletedTask;
+        //}
+
+        private string TotalGridTime => GetGridTotalTime();
+
+        private string GetGridTotalTime()
+        {
+            if (worklogsGrid == null)
+            {
+                return string.Empty;
+            }
+
+            var totalMinutes = worklogsGrid!.View.Select(x => (x.EndTime - x.StartTime).TotalMinutes).Sum();
+            return Convert.ToInt32((totalMinutes / 60)) + "h " + (totalMinutes % 60) + "m";
+        }
+
         async Task RefreshGrid()
         {
             await ViewModel.LoadCommand.Execute();
             await worklogsGrid!.Reload();
+            //Settings = JsonSerializer.Deserialize<DataGridSettings>(gridSettingState);
         }
 
         async Task EditRow(Model.Db.WorklogView worklog)

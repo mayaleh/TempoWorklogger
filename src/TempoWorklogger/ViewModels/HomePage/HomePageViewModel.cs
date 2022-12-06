@@ -61,7 +61,7 @@ namespace TempoWorklogger.ViewModels.HomePage
                 .MatchSuccessAsync(success =>
                 {
                     Worklogs = success.GroupBy(x => x.IssueKey)
-                        .ToDictionary(g => g.Key, g => g.ToList());
+                        .ToDictionary(g => g.Key + " - " + (g.First().Title ?? ""), g => g.ToList());
                     return Task.FromResult(Maya.Ext.Unit.Default);
                 });
         }

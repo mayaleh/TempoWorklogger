@@ -12,6 +12,12 @@ namespace TempoWorklogger.Model.UI
         /// <summary>
         /// Jira Issue key
         /// </summary>
+
+        public string? IssueKeyAndTitle => IssueKey == null
+            ? null
+            : IssueKey + (Title == null ? "" : " - " + Title);
+
+
         public string? IssueKey { get; set; }
 
         public string? Title { get; set; }
