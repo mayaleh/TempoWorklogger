@@ -68,7 +68,7 @@
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.IssueKey)" Width="160px" Title="Issue">
                     <EditTemplate Context="worklog">
                         <RadzenAutoComplete @bind-Value=worklogIssueKeyRowContext Name="IssueKeyAndTitle" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnAutocompleteIssueKeyChanged) Data=@ViewModel.AutoCompleteGroupdedWorklogs TextProperty="Key" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
-@*                        <RadzenAutoComplete @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.AutoCompleteWorklogs TextProperty="IssueKey" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+@* original simple autocomplete: <RadzenAutoComplete @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.AutoCompleteWorklogs TextProperty="IssueKey" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
                             <Template>
                                 @context.IssueKey - @context.Title
                             </Template>
@@ -79,7 +79,7 @@
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Title)" Width="225px" Title="Title">
                     <EditTemplate Context="worklog">
                         <RadzenTextBox @bind-Value="worklog.Title" Name="Title" Style="width:100%" />
-                        @*<RadzenAutoComplete Context="context" @bind-Value="worklog.Title" Name="Title" Style="width:100%" Placeholder="Enter title key..." Data=@ViewModel.Worklogs TextProperty="Title">
+                        @*TODO: autocomplete based on issueKey <RadzenAutoComplete Context="context" @bind-Value="worklog.Title" Name="Title" Style="width:100%" Placeholder="Enter title key..." Data=@ViewModel.Worklogs TextProperty="Title">
                             <Template>
                             @context.IssueKey - @context.Title
                             </Template>
