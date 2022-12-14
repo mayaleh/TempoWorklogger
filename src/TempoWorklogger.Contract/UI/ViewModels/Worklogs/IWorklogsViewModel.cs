@@ -8,6 +8,8 @@ namespace TempoWorklogger.Contract.UI.ViewModels.Worklogs
 
         List<Model.Db.Worklog> AutoCompleteWorklogs { get; }
 
+        Dictionary<string, List<Model.Db.Worklog>> AutoCompleteGroupdedWorklogs { get; }
+
         IList<Model.Db.WorklogView> SelectedWorklogs { get; set; }
 
         IList<Model.Db.IntegrationSettings> IntegrationSettingsList { get; set; }

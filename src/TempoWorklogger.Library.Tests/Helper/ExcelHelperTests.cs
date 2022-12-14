@@ -6,15 +6,15 @@ namespace TempoWorklogger.Library.Tests.Helper
     {
         [Theory]
         [InlineData("A", 0)]
+        [InlineData("B", 1)]
         [InlineData("G", 6)]
         [InlineData("Z", 25)]
-        //[InlineData("AA", 26)]
-        //[InlineData("AB", 27)]
-        //[InlineData("AZ", 51)]
-        //[InlineData("BA", 52)]
-        //[InlineData("ABD", 731)]
-        //[InlineData("ACR", 771)]
-        public void GetColumnIndex_ShouldReturnIndexOfTheColumn(string column, int expectedIndex)
+        [InlineData("AA", 26)]
+        [InlineData("AN", 39)]
+        [InlineData("BA", 52)]
+        [InlineData("ZZ", 701)]
+        [InlineData("AAA", 702)]
+        public void GetColumnIndex_ShouldReturnIndexOfTheColumn_WhenColumnNameGiven(string column, int expectedIndex)
         {
             // arrange
             // actual

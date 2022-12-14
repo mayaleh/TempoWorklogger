@@ -18,7 +18,8 @@
                         <label for="@nameof(WorklogDraft.IssueKey)Label" class="form-label">Worklog key</label>
                     </div>
                     <div class="col">
-                        <RadzenAutoComplete Context="context" Name="IssueKeyAndTitle" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.Worklogs TextProperty="Key" />
+                        <RadzenAutoComplete @bind-Value=issueKeyDraft Name="IssueKeyAndTitle" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.Worklogs TextProperty="Key" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                        @*<RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Style="width:100%" AllowFiltering="true" Placeholder="Select..." Data=@ViewModel.Worklogs TextProperty="Key" ValueProperty="Value" Change=@(OnIssueKeyChanged) />*@
                         <span>@(string.IsNullOrEmpty(WorklogDraft.IssueKey) == false ? $"Selected: {WorklogDraft.IssueKey}" : "")</span>
                     </div>
                 </div>
@@ -46,7 +47,7 @@
                         <label for="@nameof(WorklogDraft.StartTime)" class="form-label">Start time</label>
                     </div>
                     <div class="col">
-                        <RadzenDatePicker ShowTime="true" C HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
+                        <RadzenDatePicker ShowTime="true" ShowTimeOkButton=true HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.StartTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
                             <FooterTemplate>
                                 <RadzenButton Class="my-3 w-100" Click=@(_ => { WorklogDraft.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" Variant="Variant.Outlined" Shade="Shade.Lighter" />
                             </FooterTemplate>
@@ -62,7 +63,7 @@
                         <label for="@nameof(WorklogDraft.EndTime)" class="form-label">End time</label>
                     </div>
                     <div class="col">
-                        <RadzenDatePicker ShowTime="true" HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
+                        <RadzenDatePicker ShowTime=true ShowTimeOkButton=true HoursStep="1" MinutesStep="5" SecondsStep="10" @bind-Value=WorklogDraft.EndTime DateFormat="dd.MM.yyyy HH:mm" class="w-100">
                             <FooterTemplate>
                                 <RadzenButton Class="my-3 w-100" Click=@(_ => { WorklogDraft.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" Variant="Variant.Outlined" Shade="Shade.Lighter" />
                             </FooterTemplate>

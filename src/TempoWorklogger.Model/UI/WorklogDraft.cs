@@ -2,7 +2,7 @@
 
 namespace TempoWorklogger.Model.UI
 {
-    public class WorklogDraft : ICloneable
+    public class WorklogDraft : IIntervalNullable, ICloneable
     {
         /// <summary>
         /// Worklog description

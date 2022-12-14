@@ -3,7 +3,7 @@ using SQLiteNetExtensions.Attributes;
 
 namespace TempoWorklogger.Model.Db
 {
-    public class Worklog : ICloneable
+    public class Worklog : IInterval, ICloneable
     {
         [PrimaryKey, AutoIncrement]
         public long Id { get; set; }

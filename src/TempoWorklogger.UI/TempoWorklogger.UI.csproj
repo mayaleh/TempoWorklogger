@@ -28,6 +28,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\TempoWorklogger.Contract\TempoWorklogger.Contract.csproj" />
+	  <ProjectReference Include="..\TempoWorklogger.Library\TempoWorklogger.Library.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>

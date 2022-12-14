@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using TempoWorklogger.Contract.UI;
 using TempoWorklogger.Contract.UI.Core;
 using TempoWorklogger.Contract.UI.ViewModels.Worklogs;
-
 using TempoWorklogger.UI.Core;
 using Command = TempoWorklogger.UI.Core.Command;
 
@@ -58,6 +57,8 @@ namespace TempoWorklogger.ViewModels.Worklogs
         public IList<Model.Db.WorklogView> SelectedWorklogs { get; set; } = new List<Model.Db.WorklogView>();
 
         public IList<Model.Db.IntegrationSettings> IntegrationSettingsList { get; set; } = new List<Model.Db.IntegrationSettings>();
+        
+        public Dictionary<string, List<Model.Db.Worklog>> AutoCompleteGroupdedWorklogs { get; set; } = new();
 
         public Dictionary<long, tempoWorklogResponseResult> SentToTempoResults { get; set; } = new Dictionary<long, tempoWorklogResponseResult>();
 

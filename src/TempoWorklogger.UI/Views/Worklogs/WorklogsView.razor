@@ -29,15 +29,14 @@
         </RadzenMenu>
     </div>
     <div class="col"></div>
-    <div class="col-auto">
-        <strong>Total time: @TotalGridTime</strong>
-    </div>
 </div>
 
 @*TODO: actions: Batch actions like delete, send to somewhere (Tempo primary and other integrations..)*@
 
 <div class="row mb-2">
     <div class="col-12">
+
+        @*@bind-Settings=@Settings*@
         <RadzenDataGrid @ref="worklogsGrid"
                         Data="@ViewModel.Worklogs"
                         TItem="Model.Db.WorklogView"
@@ -52,7 +51,8 @@
                         RowCreate="@OnCreateRow"
                         AllowRowSelectOnRowClick="false"
                         @bind-Value=@ViewModel.SelectedWorklogs
-                        SelectionMode="DataGridSelectionMode.Multiple">
+                        SelectionMode="DataGridSelectionMode.Multiple"
+                        >
             <Columns>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Width="60px" Sortable="false" Filterable="false">
                     <HeaderTemplate>
@@ -67,13 +67,13 @@
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Id)" Width="75px" Title="ID" />
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.IssueKey)" Width="160px" Title="Issue">
                     <EditTemplate Context="worklog">
-                        @*<RadzenTextBox @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" />*@
-                        <RadzenAutoComplete Context="context" @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.AutoCompleteWorklogs TextProperty="IssueKey">
-                            @*    <Template>
-                            @context.IssueKey - @context.Title
-                            </Template>*@
-                        </RadzenAutoComplete>
-                        <RadzenRequiredValidator Text="Issue key is required" Component="IssueKey" Popup="true" />
+                        <RadzenAutoComplete @bind-Value=worklogIssueKeyRowContext Name="IssueKeyAndTitle" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnAutocompleteIssueKeyChanged) Data=@ViewModel.AutoCompleteGroupdedWorklogs TextProperty="Key" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+@*                        <RadzenAutoComplete @bind-Value="worklog.IssueKey" Name="IssueKey" Style="width:100%" Placeholder="Enter issue key..." Change=@(OnIssueKeyChanged) Data=@ViewModel.AutoCompleteWorklogs TextProperty="IssueKey" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+                            <Template>
+                                @context.IssueKey - @context.Title
+                            </Template>
+                        </RadzenAutoComplete>*@
+                        <RadzenRequiredValidator Text="Issue key is required" Component="IssueKeyAndTitle" Popup="true" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Title)" Width="225px" Title="Title">
@@ -88,7 +88,7 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.StartTime)" Width="225px" Title="Started">
                     <EditTemplate Context="worklog">
-                        <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style="width:100%">
+                        <RadzenDatePicker @bind-Value="worklog.StartTime" ShowTime=true ShowTimeOkButton=true Style="width:100%" DateFormat="dd.MM.yyyy HH:mm">
                             <FooterTemplate>
                                 <RadzenButton Class="my-3 w-100" Click=@(_ => { worklog.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
                             </FooterTemplate>
@@ -97,12 +97,15 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.EndTime)" Width="225px" Title="Ended">
                     <EditTemplate Context="worklog">
-                        <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%">
+                        <RadzenDatePicker @bind-Value="worklog.EndTime" ShowTime=true ShowTimeOkButton=true Style="width:100%" DateFormat="dd.MM.yyyy HH:mm">
                             <FooterTemplate>
                                 <RadzenButton Class="my-3 w-100" Click=@(_ => { worklog.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0); }) Text="Now time" />
                             </FooterTemplate>
                         </RadzenDatePicker>
                     </EditTemplate>
+                    <FooterTemplate>
+                        Total time: <b>@GetGridTotalTime(worklogsGrid!.View.Select(x => (x.EndTime - x.StartTime).TotalMinutes).Sum())</b>
+                    </FooterTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Model.Db.WorklogView" Property="@nameof(Model.Db.WorklogView.Description)" Title="Description">
                     <EditTemplate Context="worklog">

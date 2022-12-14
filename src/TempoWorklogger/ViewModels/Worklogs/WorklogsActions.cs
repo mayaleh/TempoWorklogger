@@ -36,10 +36,16 @@ namespace TempoWorklogger.ViewModels.Worklogs
             }
 
             this.vm.Worklogs = result.Success?.ToList() ?? new List<Model.Db.WorklogView>();
-
+            
             var worklogsResult = await this.vm.Mediator.Send(new CQRS.Worklogs.Queries.GetWorklogsQuery());
 
             this.vm.AutoCompleteWorklogs = worklogsResult.IsSuccess && worklogsResult.Success != null ? worklogsResult.Success.ToList() : new List<Model.Db.Worklog>();
+            await worklogsResult.MatchSuccessAsync(success =>
+            {
+                this.vm.AutoCompleteGroupdedWorklogs = success.GroupBy(x => x.IssueKey)
+                    .ToDictionary(g => g.Key + " - " + (g.First().Title ?? ""), g => g.ToList());
+                return Task.FromResult(Maya.Ext.Unit.Default);
+            });
         }
 
         private async Task LoadIntegrationSettings()

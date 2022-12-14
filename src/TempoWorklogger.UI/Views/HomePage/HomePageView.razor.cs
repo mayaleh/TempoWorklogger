@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Radzen.Blazor;
 using TempoWorklogger.Contract.UI.ViewModels.HomePage;
+using TempoWorklogger.Library.Extensions;
 using TempoWorklogger.Model.UI;
 
 namespace TempoWorklogger.UI.Views.HomePage
@@ -20,13 +21,17 @@ namespace TempoWorklogger.UI.Views.HomePage
 
         private string TotalDraftTime => GetTotalTime();
 
+        private string issueKeyDraft = string.Empty;
+
         private string GetTotalTime()
         {
-            var totalMinutes = ViewModel.DraftWorklogs.Where(x => x.StartTime != null && x.EndTime != null).Select(x => (x.EndTime!.Value - x.StartTime!.Value).TotalMinutes).Sum();
+            var totalMinutes = IntervalExtension.SummarizeIntervals(ViewModel.DraftWorklogs.Where(x => x.StartTime != null && x.EndTime != null)).TotalMilliseconds;
             return Convert.ToInt32((totalMinutes / 60)) + "h " + (totalMinutes % 60) + "m";
         }
+
         private async Task CreateDraftWorkLog()
         {
+            WorklogDraft.IssueKey ??= issueKeyDraft;
             ViewModel.CreateDraftCommand.Execute(WorklogDraft);
 
             if (ViewModel.DraftWorklogs.Any(x => x.IssueKey == WorklogDraft.IssueKey && x.Title == WorklogDraft.Title && x.StartTime == WorklogDraft.StartTime && x.Description == WorklogDraft.Description && x.EndTime == WorklogDraft.EndTime))
@@ -58,6 +63,7 @@ namespace TempoWorklogger.UI.Views.HomePage
         {
             WorklogDraft.EndTime = wasOriginalEndTimeEmpty ? null : WorklogDraft.EndTime;
             WorklogDraft = new();
+            issueKeyDraft = string.Empty;
         }
 
         private void OnIssueKeyChanged(object value)
